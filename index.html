@@ -974,36 +974,54 @@
         }
 
         .botao-premium {
-            width: 36px;
-            height: 36px;
-            padding: 0;
-            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            padding: 4px;
+            border-radius: 10px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid #607d8b;
-            background-color: #78909c;
-            color: #ffffff;
-            font-size: 24px;
-            line-height: 1;
-            font-family: Arial, Helvetica, sans-serif;
+            border: 1px solid #cfd8dc;
+            background-color: #f5f7f8;
             box-shadow: none;
+            transition:
+                transform 0.15s ease,
+                background-color 0.15s ease,
+                border-color 0.15s ease,
+                box-shadow 0.15s ease;
+        }
+
+        .botao-premium img {
+            display: block;
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            filter: grayscale(1) brightness(2.4);
+            opacity: 0.88;
+            transition:
+                filter 0.15s ease,
+                opacity 0.15s ease;
         }
 
         .botao-premium:hover:not(:disabled) {
-            background-color: #607d8b;
+            background-color: #eceff1;
             transform: scale(1.05);
         }
 
         .botao-premium.ativo {
-            background-color: #455a64;
-            color: #ffd54f;
-            border-color: #455a64;
+            background-color: #fff8e1;
+            border-color: #fbc02d;
+            box-shadow: 0 0 0 2px rgba(251, 192, 45, 0.18);
+        }
+
+        .botao-premium.ativo img {
+            filter: none;
+            opacity: 1;
         }
 
         .botao-premium:disabled {
             cursor: not-allowed;
-            opacity: 0.45;
+            opacity: 0.5;
         }
 
         .registro-premium-vencido,
@@ -1034,6 +1052,69 @@
         .registro-finalizado .menu-acoes,
         .registro-finalizado .opcoes-acoes {
             opacity: 1;
+        }
+
+
+        .dashboard-cabecalho {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .dashboard-periodo {
+            display: flex;
+            align-items: end;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 14px 16px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .dashboard-periodo .campo {
+            min-width: 165px;
+        }
+
+        .dashboard-periodo-info {
+            width: 100%;
+            margin-top: 3px;
+            font-size: 12px;
+            color: #607d8b;
+        }
+
+        .botao-limpar-dashboard {
+            height: 42px;
+            padding: 0 14px;
+            background-color: #eceff1;
+            color: #455a64;
+        }
+
+        .botao-limpar-dashboard:hover {
+            background-color: #cfd8dc;
+        }
+
+        @media (max-width: 650px) {
+            .dashboard-cabecalho {
+                align-items: stretch;
+            }
+
+            .dashboard-periodo {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-periodo .campo {
+                min-width: 0;
+            }
+
+            .acoes-exportacao-graficos {
+                width: 100%;
+            }
         }
 
     </style>
@@ -1144,7 +1225,7 @@
             class="botao-aba"
             id="botaoAbaGraficos"
         >
-            Gráficos
+            Dashboard
         </button>
 
         <button
@@ -1436,17 +1517,54 @@
     </div>
 
     <div id="abaGraficos" class="conteudo-aba">
-        <div
-            class="acoes-exportacao-graficos"
-            data-html2canvas-ignore="true"
-        >
-            <button
-                type="button"
-                class="botao-pdf"
-                id="botaoExportarGraficosPDF"
+        <div class="dashboard-cabecalho">
+            <div class="dashboard-periodo">
+                <div class="campo">
+                    <label for="dashboardDataDe">Analisar de</label>
+                    <input
+                        type="date"
+                        id="dashboardDataDe"
+                        aria-label="Data inicial do Dashboard"
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="dashboardDataAte">Até</label>
+                    <input
+                        type="date"
+                        id="dashboardDataAte"
+                        aria-label="Data final do Dashboard"
+                    >
+                </div>
+
+                <button
+                    type="button"
+                    id="botaoLimparPeriodoDashboard"
+                    class="botao-limpar-dashboard"
+                >
+                    Limpar período
+                </button>
+
+                <div
+                    id="dashboardPeriodoInfo"
+                    class="dashboard-periodo-info"
+                >
+                    Período analisado: todos os registros
+                </div>
+            </div>
+
+            <div
+                class="acoes-exportacao-graficos"
+                data-html2canvas-ignore="true"
             >
-                Exportar gráficos em PDF
-            </button>
+                <button
+                    type="button"
+                    class="botao-pdf"
+                    id="botaoExportarGraficosPDF"
+                >
+                    Exportar Dashboard em PDF
+                </button>
+            </div>
         </div>
 
         <section class="resumo-graficos">
@@ -1795,6 +1913,7 @@
 
     const firebaseApp = initializeApp(firebaseConfig);
     const auth = getAuth(firebaseApp);
+    const PREMIUM_LOGO_SRC = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEIAAABACAIAAAAh/ja0AAAFE0lEQVR4nOxaTUxTSxSevsd7MTEP36pIX3iGheiiaCwiC39TXdmiLqlrIbjBhYkbFaNi1KVsJNS1dKfGwk4S/xYkcE3sXeHCiEmrXYnSRN3g104YT+/vzP0hFfuFNHMvM3Pnm3PmzDfn3pbek7fYr45V1sI2ACLsD7Yh0KTRSGjSaCQ0aTQSNgiN0Le/9mgrfmPRf1HAb7H8qVT+jDuiEAjCooFB9yd3pZLx9ugWuzql8rKmv1/Q3+VndeYPkWA1FR/9mYH9Sq3Ap1hevpd7uaAvMU8IksbQwAFVAgaAz7XxGQ9k/vxv5zHmGz3x/yfGMof7tjObwa1Uvi2+Lc/M6lgPXypfcSdm5Wz/bN6ErnZ0tj2de8NUEIA17IyASX2lv5/MvbBryD1wT7wDQzf8CzyHL92XjwF+adwdy5gHAS93GL0ZsWjr5ZGUoR8lB/PlVGYOIDB8aUrVub9Uvk1X/W25q7MNfsVvcgdbqXyFN7r24J2GgQMGceHmg/xsgXkFhvtsbnGl8j2x1i2YgNibt2V07tzWIw2sh3SyW1x6jjAGwCzoJMIilAkmC/TwL4eGXmig39GR4+ISHE4OTbhOmDzMTA73deUezzs08UIDsVV4MABfCpADh5kJHuGwSJSlIdyJ6ouz6gtaEvnZ17TnwYEDDpWVadAtwo98cEWx/Pn6+LS4xNxdGUnZVVajYehIaXPwADC5Rpgk4h2xml42Q03hQrGKMn2AKxAVzLukAfCiomnb1vQlrAruxvhNJ3dZzp0CjTThUHuqgroGB1fVCP8008CdbO7F6JoXQLlYtlWg0RPfJsrTvk8I8tDI8ovZnF4U1kaCzISf3VoVMIgIJPArS+eUpYHGNM6GF6AsAaUsylQ9CMjSaCchYp05GJ641SpYeTmLf3A8BthJ932nbvMygubDybNMBaXyJ1G2XB6yNJDUIJ0GLD38Q5YGXRhFMjfrAxqILVMtv1m6jToSdbAGgSwN6kgOGbSQQKWU5cqUt8ZP79xqo88cADEmdMTff7VA3pvrOMTxdmL/oh8aFDF1a8CAwoaYTtWdh+5aluFedomX6p3KVa4GixTZuZHzNVeQpUGFDatpE7aOoI/TrCypEHCxE4tyql60hwp6QLAU80xpbZj9ytLFP9TbzbICUwH1KLu2CjS4Xwn7IseDvI652lWVU6ErYArqUdncc8tqaru44YyfDt+1aEIEZ7WijTXUaKAXeu4brCZ7lPcQeSCDQbdaO1MwD5qK9oVnTIydZuEAvkQDiYMpmCFrGJH4wwsXQz4PEkv1rYoMB5xbxGXtdceUQ30jDRkgcmPoXZ1RfolCsEwMHJhEfrXOqVaZFFZrrkX7hfUfTQ4Hsk6QXDVwkMmvenwxgDT907nFTH+vuAPvOtLX1bp500LB40kds3D+zLGB/r30Jvbc/BP3LIzppZmkRdYePHHjtEG3w0pXx2e0wjulftJHdw+a8nHZ3Mvs1HOZHuppqHDgDcBhKHPQrE1ABrFlvrCk6bZ8MHoo8J7ubYNWCcXhi/c1aSEc6T1BraHMg9nPJQf/FAGF+Zp9+Mkx1rYFhxY7fVm1551pTUXMg8ZNFgRAZihzyKdkBIH8E91hm7NDYDQ4QGb0XNqDjK8RKGS9vmkImAZH1c2SuxPdHa58+OgRTzV/mchQaAiAT6KWh69+iNSGc2wrzvSlj1XBzz9E0gLKo4b7PVWpKiXXI/fe/EivkdCk0UjYIDR+AAAA///i/8PsAAAABklEQVQDACuyXCLE5TqTAAAAAElFTkSuQmCC";
     const db = getFirestore(firebaseApp);
     const colecaoOrcamentos = collection(db, "orcamentos");
     const colecaoLixeira = collection(db, "lixeira");
@@ -1829,6 +1948,14 @@
         document.getElementById("corpoDevolucao");
     const abaGraficos =
         document.getElementById("abaGraficos");
+    const dashboardDataDe =
+        document.getElementById("dashboardDataDe");
+    const dashboardDataAte =
+        document.getElementById("dashboardDataAte");
+    const botaoLimparPeriodoDashboard =
+        document.getElementById("botaoLimparPeriodoDashboard");
+    const dashboardPeriodoInfo =
+        document.getElementById("dashboardPeriodoInfo");
     const abaLixeira =
         document.getElementById("abaLixeira");
     const corpoLixeira =
@@ -2506,9 +2633,64 @@
         }
     }
 
-    function obterResumoStatus() {
+    function obterRegistrosDashboard() {
+        const dataDe = dashboardDataDe.value;
+        const dataAte = dashboardDataAte.value;
+
+        const inicio = dataDe
+            ? new Date(`${dataDe}T00:00:00`).getTime()
+            : null;
+
+        const fim = dataAte
+            ? new Date(`${dataAte}T23:59:59.999`).getTime()
+            : null;
+
+        return cobrancas.filter(cobranca => {
+            const dataRegistro =
+                new Date(cobranca.dataHora).getTime();
+
+            if (Number.isNaN(dataRegistro)) {
+                return false;
+            }
+
+            return (
+                (inicio === null || dataRegistro >= inicio) &&
+                (fim === null || dataRegistro <= fim)
+            );
+        });
+    }
+
+    function formatarDataDashboard(valor) {
+        if (!valor) {
+            return "";
+        }
+
+        const [ano, mes, dia] = valor.split("-");
+        return `${dia}/${mes}/${ano}`;
+    }
+
+    function atualizarTextoPeriodoDashboard() {
+        const de = dashboardDataDe.value;
+        const ate = dashboardDataAte.value;
+
+        if (!de && !ate) {
+            dashboardPeriodoInfo.textContent =
+                "Período analisado: todos os registros";
+        } else if (de && ate) {
+            dashboardPeriodoInfo.textContent =
+                `Período analisado: ${formatarDataDashboard(de)} até ${formatarDataDashboard(ate)}`;
+        } else if (de) {
+            dashboardPeriodoInfo.textContent =
+                `Período analisado: a partir de ${formatarDataDashboard(de)}`;
+        } else {
+            dashboardPeriodoInfo.textContent =
+                `Período analisado: até ${formatarDataDashboard(ate)}`;
+        }
+    }
+
+    function obterResumoStatus(registros = cobrancas) {
         const resumo = {
-            total: cobrancas.length,
+            total: registros.length,
             valorTotalAprovado: 0,
             porStatus: {},
             aprovadosPorCanal: {
@@ -2522,7 +2704,7 @@
             resumo.porStatus[configuracao.nome] = 0;
         });
 
-        cobrancas.forEach(cobranca => {
+        registros.forEach(cobranca => {
             if (resumo.porStatus[cobranca.status] == null) {
                 resumo.porStatus[cobranca.status] = 0;
             }
@@ -2887,7 +3069,15 @@
     }
 
     function atualizarGraficos() {
-        const resumo = obterResumoStatus();
+        atualizarTextoPeriodoDashboard();
+
+        const registrosDashboard =
+            obterRegistrosDashboard();
+
+        const resumo =
+            obterResumoStatus(
+                registrosDashboard
+            );
 
         graficoTotalCobrados.textContent = resumo.total;
         graficoTotalAprovados.textContent = resumo.aprovados;
@@ -3898,10 +4088,12 @@
                         ? "botao-premium ativo"
                         : "botao-premium";
 
-                botaoPremium.textContent =
-                    cobranca.premium
-                        ? "★"
-                        : "☆";
+                botaoPremium.innerHTML = `
+                    <img
+                        src="${PREMIUM_LOGO_SRC}"
+                        alt=""
+                    >
+                `;
 
                 botaoPremium.title =
                     cobranca.premium
@@ -4860,6 +5052,47 @@
         }
     );
 
+    dashboardDataDe.addEventListener(
+        "change",
+        () => {
+            if (
+                dashboardDataDe.value &&
+                dashboardDataAte.value &&
+                dashboardDataDe.value > dashboardDataAte.value
+            ) {
+                dashboardDataAte.value =
+                    dashboardDataDe.value;
+            }
+
+            atualizarGraficos();
+        }
+    );
+
+    dashboardDataAte.addEventListener(
+        "change",
+        () => {
+            if (
+                dashboardDataDe.value &&
+                dashboardDataAte.value &&
+                dashboardDataAte.value < dashboardDataDe.value
+            ) {
+                dashboardDataDe.value =
+                    dashboardDataAte.value;
+            }
+
+            atualizarGraficos();
+        }
+    );
+
+    botaoLimparPeriodoDashboard.addEventListener(
+        "click",
+        () => {
+            dashboardDataDe.value = "";
+            dashboardDataAte.value = "";
+            atualizarGraficos();
+        }
+    );
+
     botaoAbaGraficos.addEventListener(
         "click",
         () => {
@@ -5649,24 +5882,24 @@
                 pdf.setPage(pagina);
                 pdf.setFontSize(7.5);
                 pdf.text(
-                    `Limerpak — Gráficos | Página ${pagina} de ${totalPaginas}`,
+                    `Limerpak — Dashboard | Página ${pagina} de ${totalPaginas}`,
                     margem,
                     alturaPagina - 3
                 );
             }
 
             pdf.save(
-                `graficos_orcamentos_limerpak_${obterDataArquivo()}.pdf`
+                `dashboard_orcamentos_limerpak_${obterDataArquivo()}.pdf`
             );
         } catch (erro) {
             console.error(
-                "Erro ao exportar gráficos em PDF:",
+                "Erro ao exportar Dashboard em PDF:",
                 erro
             );
 
             alert(
                 erro.message ||
-                "Não foi possível gerar o PDF dos gráficos."
+                "Não foi possível gerar o PDF do Dashboard."
             );
         } finally {
             botaoExportarGraficosPDF.disabled =
