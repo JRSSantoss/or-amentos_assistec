@@ -967,6 +967,75 @@
             color: #e65100;
         }
 
+
+        .celula-premium {
+            width: 72px;
+            text-align: center;
+        }
+
+        .botao-premium {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #607d8b;
+            background-color: #78909c;
+            color: #ffffff;
+            font-size: 24px;
+            line-height: 1;
+            font-family: Arial, Helvetica, sans-serif;
+            box-shadow: none;
+        }
+
+        .botao-premium:hover:not(:disabled) {
+            background-color: #607d8b;
+            transform: scale(1.05);
+        }
+
+        .botao-premium.ativo {
+            background-color: #455a64;
+            color: #ffd54f;
+            border-color: #455a64;
+        }
+
+        .botao-premium:disabled {
+            cursor: not-allowed;
+            opacity: 0.45;
+        }
+
+        .registro-premium-vencido,
+        .registro-premium-vencido:hover {
+            background-color: #fff6bf !important;
+        }
+
+        .registro-devolucao-vencido,
+        .registro-devolucao-vencido:hover {
+            background-color: #ffe0d6 !important;
+        }
+
+        .registro-premium-vencido td,
+        .registro-devolucao-vencido td {
+            border-bottom-color: rgba(96, 125, 139, 0.22);
+        }
+
+        .registro-finalizado,
+        .registro-finalizado:hover {
+            background-color: #f1f4f6 !important;
+        }
+
+        .registro-finalizado td {
+            opacity: 0.55;
+        }
+
+        .registro-finalizado .celula-premium,
+        .registro-finalizado .menu-acoes,
+        .registro-finalizado .opcoes-acoes {
+            opacity: 1;
+        }
+
     </style>
 </head>
 
@@ -1298,21 +1367,13 @@
                 Exportar PDF
             </button>
 
-            <button
-                type="button"
-                class="botao-perigo"
-                id="botaoLimpar"
-            >
-                Apagar tudo
-            </button>
-
         </div>
 
         <div class="tabela-container">
             <table>
                 <thead>
                     <tr>
-                        <th>Nº</th>
+                        <th>Premium</th>
                         <th>O.S.</th>
                         <th>NF</th>
                         <th>Cliente</th>
@@ -1565,6 +1626,11 @@
             <div class="info-registro-item">
                 <span>Cliente</span>
                 <strong id="infoCliente">—</strong>
+            </div>
+
+            <div class="info-registro-item">
+                <span>Cliente Premium</span>
+                <strong id="infoPremium">—</strong>
             </div>
 
             <div class="info-registro-item">
@@ -1838,6 +1904,7 @@
     const infoOS = document.getElementById("infoOS");
     const infoNF = document.getElementById("infoNF");
     const infoCliente = document.getElementById("infoCliente");
+    const infoPremium = document.getElementById("infoPremium");
     const infoCriadoPor =
         document.getElementById("infoCriadoPor");
     const infoCriadoEm =
@@ -1884,7 +1951,6 @@
         document.getElementById("botaoExportarPDF");
     const botaoExportarGraficosPDF =
         document.getElementById("botaoExportarGraficosPDF");
-    const botaoLimpar = document.getElementById("botaoLimpar");
 
     let cobrancas = [];
     let itensLixeira = [];
@@ -1928,6 +1994,8 @@
         infoOS.textContent = registro.ordemServico || "—";
         infoNF.textContent = registro.notaFiscal || "—";
         infoCliente.textContent = registro.nomeCliente || "—";
+        infoPremium.textContent =
+            registro.premium ? "Sim ★" : "Não";
         infoCriadoPor.textContent = registro.criadoPor || "Não informado";
         infoCriadoEm.textContent = registro.criadoEm
             ? formatarData(registro.criadoEm)
@@ -2075,33 +2143,38 @@
     const PRAZO_DEVOLUCAO_MS =
         7 * 24 * 60 * 60 * 1000;
 
-    function obterRegistrosParaDevolucao() {
-        const agora = Date.now();
+    function atingiuPrazoDeSeteDias(cobranca) {
+        if (
+            cobranca.status !== "Não respondido"
+        ) {
+            return false;
+        }
 
+        const dataRegistro =
+            new Date(cobranca.dataHora).getTime();
+
+        if (Number.isNaN(dataRegistro)) {
+            return false;
+        }
+
+        return (
+            Date.now() - dataRegistro >=
+            PRAZO_DEVOLUCAO_MS
+        );
+    }
+
+    function obterRegistrosParaDevolucao() {
         return cobrancas
             .filter(cobranca => {
                 if (
                     cobranca.finalizado ||
-                    cobranca.status !==
-                    "Não respondido"
+                    cobranca.premium
                 ) {
                     return false;
                 }
 
-                const dataRegistro =
-                    new Date(
-                        cobranca.dataHora
-                    ).getTime();
-
-                if (
-                    Number.isNaN(dataRegistro)
-                ) {
-                    return false;
-                }
-
-                return (
-                    agora - dataRegistro >=
-                    PRAZO_DEVOLUCAO_MS
+                return atingiuPrazoDeSeteDias(
+                    cobranca
                 );
             })
             .sort(
@@ -3199,6 +3272,10 @@
             "situacao",
             "status"
         );
+        const indicePremium = localizarColuna(
+            "premium",
+            "cliente premium"
+        );
         const indiceFinalizado = localizarColuna(
             "finalizado"
         );
@@ -3293,6 +3370,16 @@
                             ? valorConvertido
                             : 0,
                     status: situacao,
+                    premium:
+                        indicePremium >= 0
+                            ? ["sim", "true", "1", "premium", "★"].includes(
+                                String(
+                                    linha[indicePremium] || ""
+                                )
+                                    .trim()
+                                    .toLocaleLowerCase("pt-BR")
+                            )
+                            : false,
                     finalizado:
                         indiceFinalizado >= 0
                             ? ["sim", "true", "1", "finalizado"].includes(
@@ -3381,6 +3468,48 @@
         }
     }
 
+    async function alternarPremium(id) {
+        if (!auth.currentUser) {
+            return;
+        }
+
+        const registro =
+            cobrancas.find(item => item.id === id);
+
+        if (!registro) {
+            return;
+        }
+
+        if (registro.finalizado) {
+            alert(
+                "Este registro já foi finalizado e não pode mais ser alterado."
+            );
+            return;
+        }
+
+        try {
+            await updateDoc(
+                doc(db, "orcamentos", id),
+                {
+                    premium:
+                        !Boolean(registro.premium),
+                    atualizadoEm:
+                        serverTimestamp(),
+                    atualizadoPor:
+                        auth.currentUser.email || ""
+                }
+            );
+        } catch (erro) {
+            console.error(
+                "Erro ao alterar Premium:",
+                erro
+            );
+            alert(
+                "Não foi possível alterar a marcação Premium."
+            );
+        }
+    }
+
     async function finalizarCobranca(id) {
         if (!auth.currentUser) {
             return;
@@ -3466,6 +3595,7 @@
                 dataHora: registro.dataHora || new Date().toISOString(),
                 valorManutencao: Number(registro.valorManutencao || 0),
                 status: registro.status || "Não respondido",
+                premium: Boolean(registro.premium),
                 finalizado: Boolean(registro.finalizado),
                 finalizadoPor: registro.finalizadoPor || "",
                 finalizadoEm: registro.finalizadoEm || "",
@@ -3726,9 +3856,85 @@
                 const linha =
                     document.createElement("tr");
 
-                linha.appendChild(
-                    criarCelula(indice + 1)
+                const venceuSeteDias =
+                    atingiuPrazoDeSeteDias(
+                        cobranca
+                    );
+
+                if (cobranca.finalizado) {
+                    linha.classList.add(
+                        "registro-finalizado"
+                    );
+                    linha.title =
+                        "Registro finalizado — edição bloqueada";
+                } else if (
+                    venceuSeteDias &&
+                    cobranca.premium
+                ) {
+                    linha.classList.add(
+                        "registro-premium-vencido"
+                    );
+                    linha.title =
+                        "Cliente Premium: passou de 7 dias sem resposta e não vai para Devolução.";
+                } else if (venceuSeteDias) {
+                    linha.classList.add(
+                        "registro-devolucao-vencido"
+                    );
+                    linha.title =
+                        "Cobrança com 7 dias ou mais sem resposta — também está na aba Devolução.";
+                }
+
+                const celulaPremium =
+                    document.createElement("td");
+                const botaoPremium =
+                    document.createElement("button");
+
+                celulaPremium.className =
+                    "celula-premium";
+
+                botaoPremium.type = "button";
+                botaoPremium.className =
+                    cobranca.premium
+                        ? "botao-premium ativo"
+                        : "botao-premium";
+
+                botaoPremium.textContent =
+                    cobranca.premium
+                        ? "★"
+                        : "☆";
+
+                botaoPremium.title =
+                    cobranca.premium
+                        ? "Cliente Premium — clique para remover"
+                        : "Marcar cliente como Premium";
+
+                botaoPremium.setAttribute(
+                    "aria-label",
+                    botaoPremium.title
                 );
+
+                botaoPremium.disabled =
+                    Boolean(cobranca.finalizado);
+
+                botaoPremium.addEventListener(
+                    "click",
+                    async () => {
+                        botaoPremium.disabled =
+                            true;
+
+                        await alternarPremium(
+                            cobranca.id
+                        );
+                    }
+                );
+
+                celulaPremium.appendChild(
+                    botaoPremium
+                );
+                linha.appendChild(
+                    celulaPremium
+                );
+
                 linha.appendChild(
                     criarCelula(
                         cobranca.ordemServico || "—"
@@ -4002,10 +4208,6 @@
         }
     }
 
-    async function apagarTodosDoFirestore() {
-        await moverTodosAtivosParaLixeira();
-    }
-
     async function adicionarRegistrosAoFirestore(
         registros
     ) {
@@ -4055,6 +4257,8 @@
                     status:
                         registro.status ||
                         "Não respondido",
+                    premium:
+                        Boolean(registro.premium),
                     finalizado:
                         Boolean(registro.finalizado),
                     finalizadoPor:
@@ -4226,6 +4430,8 @@
                     Number(item.valorManutencao || 0),
                 status:
                     item.status || "Não respondido",
+                premium:
+                    Boolean(item.premium),
                 finalizado:
                     Boolean(item.finalizado),
                 finalizadoPor:
@@ -4333,6 +4539,10 @@
                             status:
                                 dados.status ||
                                 "Não respondido",
+                            premium:
+                                Boolean(
+                                    dados.premium
+                                ),
                             finalizado:
                                 Boolean(
                                     dados.finalizado
@@ -4397,54 +4607,6 @@
         );
     }
 
-    async function moverTodosAtivosParaLixeira() {
-        const snapshot =
-            await getDocs(colecaoOrcamentos);
-
-        const documentos = snapshot.docs;
-        const email =
-            auth.currentUser?.email || "";
-        const tamanhoLote = 200;
-
-        for (
-            let inicio = 0;
-            inicio < documentos.length;
-            inicio += tamanhoLote
-        ) {
-            const parte = documentos.slice(
-                inicio,
-                inicio + tamanhoLote
-            );
-            const lote = writeBatch(db);
-
-            parte.forEach(documentoSnapshot => {
-                const dados =
-                    documentoSnapshot.data();
-                const id =
-                    documentoSnapshot.id;
-
-                lote.set(
-                    doc(db, "lixeira", id),
-                    {
-                        ...dados,
-                        origemId: id,
-                        excluidoPor: email,
-                        excluidoEm:
-                            serverTimestamp(),
-                        expiraEm:
-                            calcularExpiracaoLixeira()
-                    }
-                );
-
-                lote.delete(
-                    doc(db, "orcamentos", id)
-                );
-            });
-
-            await lote.commit();
-        }
-    }
-
     function iniciarSincronizacao() {
         if (cancelarEscutaFirestore) {
             cancelarEscutaFirestore();
@@ -4504,6 +4666,10 @@
                                     status:
                                         dados.status ||
                                         "Não respondido",
+                                    premium:
+                                        Boolean(
+                                            dados.premium
+                                        ),
                                     finalizado:
                                         Boolean(
                                             dados.finalizado
@@ -4874,6 +5040,7 @@
                         valorManutencao:
                             valorConvertido,
                         status: status.value,
+                        premium: false,
                         finalizado: false,
                         criadoEm:
                             serverTimestamp(),
@@ -4957,51 +5124,6 @@
         renderizarTabela
     );
 
-    botaoLimpar.addEventListener(
-        "click",
-        async () => {
-            if (cobrancas.length === 0) {
-                alert(
-                    "Não existem registros para apagar."
-                );
-                return;
-            }
-
-            const confirmar = confirm(
-                "ATENÇÃO: isso apagará todos os registros do Firebase " +
-                "para todos os usuários.\n\nDeseja continuar?"
-            );
-
-            if (!confirmar) {
-                return;
-            }
-
-            const confirmarNovamente = confirm(
-                "Confirme novamente: deseja enviar TODOS os orçamentos ativos para a lixeira?"
-            );
-
-            if (!confirmarNovamente) {
-                return;
-            }
-
-            botaoLimpar.disabled = true;
-
-            try {
-                await apagarTodosDoFirestore();
-            } catch (erro) {
-                console.error(
-                    "Erro ao apagar registros:",
-                    erro
-                );
-                alert(
-                    "Não foi possível apagar todos os registros."
-                );
-            } finally {
-                botaoLimpar.disabled = false;
-            }
-        }
-    );
-
     botaoImportar.addEventListener(
         "click",
         () => {
@@ -5044,72 +5166,41 @@
                     );
                 }
 
-                let modoImportacao = "substituir";
-
-                if (cobrancas.length > 0) {
-                    const substituir = confirm(
-                        "Como deseja importar o backup?\n\n" +
-                        "OK = SUBSTITUIR todos os registros compartilhados atuais.\n" +
-                        "Cancelar = escolher a opção de MESCLAR."
+                // A importação é sempre por mesclagem.
+                // Registros existentes nunca são apagados em massa.
+                const chavesExistentes =
+                    new Set(
+                        cobrancas.map(
+                            criarChaveRegistro
+                        )
                     );
 
-                    if (!substituir) {
-                        const mesclar = confirm(
-                            "Deseja MESCLAR o backup com os registros atuais?\n\n" +
-                            "Registros idênticos não serão duplicados.\n" +
-                            "Cancelar = interromper a importação."
-                        );
-
-                        if (!mesclar) {
-                            return;
-                        }
-
-                        modoImportacao =
-                            "mesclar";
-                    }
-                }
-
-                let registrosParaAdicionar =
-                    registrosImportados;
                 let quantidadeIgnorada = 0;
 
-                if (
-                    modoImportacao ===
-                    "substituir"
-                ) {
-                    await apagarTodosDoFirestore();
-                } else {
-                    const chavesExistentes =
-                        new Set(
-                            cobrancas.map(
-                                criarChaveRegistro
-                            )
-                        );
-
-                    registrosParaAdicionar =
-                        registrosImportados.filter(
-                            registro => {
-                                const chave =
-                                    criarChaveRegistro(
-                                        registro
-                                    );
-
-                                if (
-                                    chavesExistentes.has(
-                                        chave
-                                    )
-                                ) {
-                                    quantidadeIgnorada++;
-                                    return false;
-                                }
-
-                                chavesExistentes.add(
-                                    chave
+                const registrosParaAdicionar =
+                    registrosImportados.filter(
+                        registro => {
+                            const chave =
+                                criarChaveRegistro(
+                                    registro
                                 );
-                                return true;
+
+                            if (
+                                chavesExistentes.has(
+                                    chave
+                                )
+                            ) {
+                                quantidadeIgnorada++;
+                                return false;
                             }
-                        );
-                }
+
+                            chavesExistentes.add(
+                                chave
+                            );
+
+                            return true;
+                        }
+                    );
 
                 await adicionarRegistrosAoFirestore(
                     registrosParaAdicionar
@@ -5319,8 +5410,8 @@
                 3;
 
             const corpo = registros.map(
-                (registro, indice) => [
-                    indice + 1,
+                registro => [
+                    registro.premium ? "Sim ★" : "Não",
                     registro.ordemServico || "—",
                     registro.notaFiscal || "—",
                     registro.nomeCliente || "—",
@@ -5341,7 +5432,7 @@
             pdf.autoTable({
                 startY: inicioTabela,
                 head: [[
-                    "Nº",
+                    "Premium",
                     "O.S.",
                     "NF",
                     "Cliente",
@@ -5606,7 +5697,7 @@
             }
 
             const cabecalho = [
-                "Número",
+                "Premium",
                 "O.S.",
                 "NF",
                 "Cliente",
@@ -5619,8 +5710,10 @@
             ];
 
             const linhas = cobrancas.map(
-                (cobranca, indice) => [
-                    indice + 1,
+                cobranca => [
+                    cobranca.premium
+                        ? "Sim"
+                        : "Não",
                     cobranca.ordemServico || "",
                     cobranca.notaFiscal || "",
                     cobranca.nomeCliente,
