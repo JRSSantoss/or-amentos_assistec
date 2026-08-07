@@ -815,6 +815,94 @@
             }
         }
 
+
+        .logo-cabecalho {
+            display: inline-flex;
+            align-items: center;
+            margin: 0 0 8px;
+        }
+
+        .logo-cabecalho img {
+            display: block;
+            width: min(340px, 100%);
+            height: auto;
+        }
+
+        @media (max-width: 650px) {
+            .logo-cabecalho img {
+                width: min(260px, 100%);
+            }
+        }
+
+
+        .aba-com-contador {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .contador-devolucao {
+            min-width: 21px;
+            height: 21px;
+            padding: 0 6px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #c62828;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .contador-devolucao.zerado {
+            background-color: #90a4ae;
+        }
+
+        .devolucao-aviso {
+            margin-bottom: 18px;
+            padding: 13px 15px;
+            border-radius: 8px;
+            background-color: #fff8e1;
+            color: #6d4c41;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .dias-sem-resposta {
+            display: inline-block;
+            min-width: 74px;
+            padding: 5px 8px;
+            border-radius: 999px;
+            background-color: #ffebee;
+            color: #b71c1c;
+            font-weight: bold;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .acao-devolucao {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .botao-detalhes-devolucao,
+        .botao-editar-devolucao {
+            height: 32px;
+            padding: 0 10px;
+        }
+
+        .botao-detalhes-devolucao {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .botao-editar-devolucao {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+
     </style>
 </head>
 
@@ -870,7 +958,12 @@
 
 <header>
     <div class="cabecalho-conteudo">
-        <h1>Limerpak — Assistência Técnica</h1>
+        <div class="logo-cabecalho">
+            <img
+                src="data:image/png;base64,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"
+                alt="Logo da Limerpak"
+            >
+        </div>
         <p>Acompanhamento de cobranças e aprovações de orçamentos</p>
 
         <div class="usuario-logado">
@@ -899,6 +992,18 @@
             id="botaoAbaAcompanhamento"
         >
             Acompanhamento
+        </button>
+
+        <button
+            type="button"
+            class="botao-aba aba-com-contador"
+            id="botaoAbaDevolucao"
+        >
+            <span>Devolução</span>
+            <span
+                id="contadorDevolucao"
+                class="contador-devolucao zerado"
+            >0</span>
         </button>
 
         <button
@@ -1148,6 +1253,41 @@
     </section>
 
 
+    </div>
+
+
+    <div id="abaDevolucao" class="conteudo-aba">
+        <section class="painel">
+            <h2>Devolução</h2>
+
+            <div class="devolucao-aviso">
+                Esta lista é preenchida automaticamente. Aparecem aqui as
+                cobranças que permanecem como <strong>Não respondido</strong>
+                após completar 7 dias desde a data do registro.
+            </div>
+
+            <div class="tabela-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nº</th>
+                            <th>O.S.</th>
+                            <th>NF</th>
+                            <th>Cliente</th>
+                            <th>Empresa</th>
+                            <th>Canal</th>
+                            <th>Data da cobrança</th>
+                            <th>Dias sem resposta</th>
+                            <th>Valor</th>
+                            <th>Situação</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="corpoDevolucao"></tbody>
+                </table>
+            </div>
+        </section>
     </div>
 
     <div id="abaGraficos" class="conteudo-aba">
@@ -1513,12 +1653,20 @@
 
     const botaoAbaAcompanhamento =
         document.getElementById("botaoAbaAcompanhamento");
+    const botaoAbaDevolucao =
+        document.getElementById("botaoAbaDevolucao");
+    const contadorDevolucao =
+        document.getElementById("contadorDevolucao");
     const botaoAbaGraficos =
         document.getElementById("botaoAbaGraficos");
     const botaoAbaLixeira =
         document.getElementById("botaoAbaLixeira");
     const abaAcompanhamento =
         document.getElementById("abaAcompanhamento");
+    const abaDevolucao =
+        document.getElementById("abaDevolucao");
+    const corpoDevolucao =
+        document.getElementById("corpoDevolucao");
     const abaGraficos =
         document.getElementById("abaGraficos");
     const abaLixeira =
@@ -1811,19 +1959,336 @@
         return Number.isFinite(numero) ? numero : NaN;
     }
 
-    function alternarAba(nomeAba) {
-        const acompanharAtivo = nomeAba === "acompanhamento";
-        const graficosAtivo = nomeAba === "graficos";
-        const lixeiraAtiva =
-            nomeAba === "lixeira" && usuarioEhAdmin;
 
-        abaAcompanhamento.classList.toggle("ativo", acompanharAtivo);
-        abaGraficos.classList.toggle("ativo", graficosAtivo);
-        abaLixeira.classList.toggle("ativo", lixeiraAtiva);
+    const PRAZO_DEVOLUCAO_MS =
+        7 * 24 * 60 * 60 * 1000;
+
+    function obterRegistrosParaDevolucao() {
+        const agora = Date.now();
+
+        return cobrancas
+            .filter(cobranca => {
+                if (
+                    cobranca.status !==
+                    "Não respondido"
+                ) {
+                    return false;
+                }
+
+                const dataRegistro =
+                    new Date(
+                        cobranca.dataHora
+                    ).getTime();
+
+                if (
+                    Number.isNaN(dataRegistro)
+                ) {
+                    return false;
+                }
+
+                return (
+                    agora - dataRegistro >=
+                    PRAZO_DEVOLUCAO_MS
+                );
+            })
+            .sort(
+                (a, b) =>
+                    new Date(a.dataHora).getTime() -
+                    new Date(b.dataHora).getTime()
+            );
+    }
+
+    function calcularDiasSemResposta(dataHora) {
+        const dataRegistro =
+            new Date(dataHora).getTime();
+
+        if (Number.isNaN(dataRegistro)) {
+            return 0;
+        }
+
+        return Math.floor(
+            (Date.now() - dataRegistro) /
+            (24 * 60 * 60 * 1000)
+        );
+    }
+
+    function atualizarContadorDevolucao(total) {
+        contadorDevolucao.textContent =
+            String(total);
+
+        contadorDevolucao.classList.toggle(
+            "zerado",
+            total === 0
+        );
+    }
+
+    function renderizarDevolucao() {
+        const registros =
+            obterRegistrosParaDevolucao();
+
+        atualizarContadorDevolucao(
+            registros.length
+        );
+
+        corpoDevolucao.innerHTML = "";
+
+        if (registros.length === 0) {
+            const linha =
+                document.createElement("tr");
+            const celula =
+                document.createElement("td");
+
+            celula.colSpan = 11;
+            celula.className = "sem-registros";
+            celula.textContent =
+                "Nenhuma cobrança atingiu 7 dias sem resposta.";
+
+            linha.appendChild(celula);
+            corpoDevolucao.appendChild(linha);
+            return;
+        }
+
+        registros.forEach(
+            (cobranca, indice) => {
+                const linha =
+                    document.createElement("tr");
+
+                linha.appendChild(
+                    criarCelula(indice + 1)
+                );
+
+                linha.appendChild(
+                    criarCelula(
+                        cobranca.ordemServico ||
+                        "—"
+                    )
+                );
+
+                linha.appendChild(
+                    criarCelula(
+                        cobranca.notaFiscal ||
+                        "—"
+                    )
+                );
+
+                linha.appendChild(
+                    criarCelula(
+                        cobranca.nomeCliente ||
+                        "—"
+                    )
+                );
+
+                linha.appendChild(
+                    criarCelula(
+                        cobranca.empresa ||
+                        "—"
+                    )
+                );
+
+                const celulaCanal =
+                    document.createElement("td");
+                const etiquetaCanal =
+                    document.createElement("span");
+
+                etiquetaCanal.className = "canal";
+                etiquetaCanal.textContent =
+                    cobranca.canal || "—";
+
+                celulaCanal.appendChild(
+                    etiquetaCanal
+                );
+                linha.appendChild(celulaCanal);
+
+                linha.appendChild(
+                    criarCelula(
+                        formatarData(
+                            cobranca.dataHora
+                        )
+                    )
+                );
+
+                const celulaDias =
+                    document.createElement("td");
+                const etiquetaDias =
+                    document.createElement("span");
+                const dias =
+                    calcularDiasSemResposta(
+                        cobranca.dataHora
+                    );
+
+                etiquetaDias.className =
+                    "dias-sem-resposta";
+                etiquetaDias.textContent =
+                    `${dias} ${dias === 1 ? "dia" : "dias"}`;
+
+                celulaDias.appendChild(
+                    etiquetaDias
+                );
+                linha.appendChild(celulaDias);
+
+                linha.appendChild(
+                    criarCelula(
+                        formatarMoeda(
+                            cobranca.valorManutencao
+                        )
+                    )
+                );
+
+                const celulaStatus =
+                    document.createElement("td");
+                const seletorStatus =
+                    document.createElement("select");
+
+                seletorStatus.className =
+                    `status-select ${obterClasseStatus(
+                        cobranca.status
+                    )}`;
+
+                [
+                    "Aprovado",
+                    "Reprovado",
+                    "Não respondido",
+                    "Atualização",
+                    "Respondido - Em análise"
+                ].forEach(opcao => {
+                    const elementoOpcao =
+                        document.createElement(
+                            "option"
+                        );
+
+                    elementoOpcao.value = opcao;
+                    elementoOpcao.textContent =
+                        opcao;
+                    elementoOpcao.selected =
+                        opcao ===
+                        cobranca.status;
+
+                    seletorStatus.appendChild(
+                        elementoOpcao
+                    );
+                });
+
+                seletorStatus.addEventListener(
+                    "change",
+                    async evento => {
+                        seletorStatus.disabled =
+                            true;
+
+                        await atualizarStatus(
+                            cobranca.id,
+                            evento.target.value
+                        );
+
+                        seletorStatus.disabled =
+                            false;
+                    }
+                );
+
+                celulaStatus.appendChild(
+                    seletorStatus
+                );
+                linha.appendChild(
+                    celulaStatus
+                );
+
+                const celulaAcoes =
+                    document.createElement("td");
+                const areaAcoes =
+                    document.createElement("div");
+                const botaoDetalhes =
+                    document.createElement("button");
+                const botaoEditar =
+                    document.createElement("button");
+
+                areaAcoes.className =
+                    "acao-devolucao";
+
+                botaoDetalhes.type =
+                    "button";
+                botaoDetalhes.className =
+                    "botao-detalhes-devolucao";
+                botaoDetalhes.textContent =
+                    "Informações";
+
+                botaoEditar.type =
+                    "button";
+                botaoEditar.className =
+                    "botao-editar-devolucao";
+                botaoEditar.textContent =
+                    "Editar";
+
+                botaoDetalhes.addEventListener(
+                    "click",
+                    () =>
+                        abrirModalInformacoes(
+                            cobranca
+                        )
+                );
+
+                botaoEditar.addEventListener(
+                    "click",
+                    () =>
+                        abrirModalEdicao(
+                            cobranca.id
+                        )
+                );
+
+                areaAcoes.appendChild(
+                    botaoDetalhes
+                );
+                areaAcoes.appendChild(
+                    botaoEditar
+                );
+
+                celulaAcoes.appendChild(
+                    areaAcoes
+                );
+                linha.appendChild(
+                    celulaAcoes
+                );
+
+                corpoDevolucao.appendChild(
+                    linha
+                );
+            }
+        );
+    }
+
+    function alternarAba(nomeAba) {
+        const acompanharAtivo =
+            nomeAba === "acompanhamento";
+        const devolucaoAtiva =
+            nomeAba === "devolucao";
+        const graficosAtivo =
+            nomeAba === "graficos";
+        const lixeiraAtiva =
+            nomeAba === "lixeira" &&
+            usuarioEhAdmin;
+
+        abaAcompanhamento.classList.toggle(
+            "ativo",
+            acompanharAtivo
+        );
+        abaDevolucao.classList.toggle(
+            "ativo",
+            devolucaoAtiva
+        );
+        abaGraficos.classList.toggle(
+            "ativo",
+            graficosAtivo
+        );
+        abaLixeira.classList.toggle(
+            "ativo",
+            lixeiraAtiva
+        );
 
         botaoAbaAcompanhamento.classList.toggle(
             "ativo",
             acompanharAtivo
+        );
+        botaoAbaDevolucao.classList.toggle(
+            "ativo",
+            devolucaoAtiva
         );
         botaoAbaGraficos.classList.toggle(
             "ativo",
@@ -1833,6 +2298,10 @@
             "ativo",
             lixeiraAtiva
         );
+
+        if (devolucaoAtiva) {
+            renderizarDevolucao();
+        }
 
         if (graficosAtivo) {
             atualizarGraficos();
@@ -3735,6 +4204,7 @@
                         );
 
                     renderizarTabela();
+                    renderizarDevolucao();
 
                     definirStatusSincronizacao(
                         "Sincronizado em tempo real",
@@ -3881,6 +4351,13 @@
         }
     );
 
+    botaoAbaDevolucao.addEventListener(
+        "click",
+        () => {
+            alternarAba("devolucao");
+        }
+    );
+
     botaoAbaGraficos.addEventListener(
         "click",
         () => {
@@ -3895,6 +4372,15 @@
                 alternarAba("lixeira");
             }
         }
+    );
+
+    setInterval(
+        () => {
+            if (auth.currentUser) {
+                renderizarDevolucao();
+            }
+        },
+        60 * 1000
     );
 
     window.addEventListener(
