@@ -1,0 +1,3485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Acompanhamento de Orçamentos | Limerpak</title>
+
+    <style>
+        :root {
+            --cor-principal: #185a7d;
+            --cor-principal-escura: #10445f;
+            --cor-fundo: #f3f6f8;
+            --cor-borda: #d9e1e6;
+            --cor-texto: #263238;
+            --cor-branca: #ffffff;
+            --cor-perigo: #c62828;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+        }
+
+        header {
+            background: linear-gradient(
+                135deg,
+                var(--cor-principal),
+                var(--cor-principal-escura)
+            );
+            color: var(--cor-branca);
+            padding: 28px 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        header .cabecalho-conteudo {
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        header h1 {
+            margin: 0 0 6px;
+            font-size: 26px;
+        }
+
+        header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        main {
+            max-width: 1400px;
+            margin: 25px auto;
+            padding: 0 20px 40px;
+        }
+
+        .painel {
+            background-color: var(--cor-branca);
+            border-radius: 10px;
+            padding: 22px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .painel h2 {
+            margin-top: 0;
+            font-size: 20px;
+            color: var(--cor-principal-escura);
+        }
+
+        .formulario {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(150px, 1fr));
+            gap: 16px;
+            align-items: end;
+        }
+
+        .campo {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            height: 42px;
+            padding: 8px 10px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 6px;
+            background-color: var(--cor-branca);
+            color: var(--cor-texto);
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--cor-principal);
+            outline: 2px solid rgba(24, 90, 125, 0.12);
+        }
+
+        button {
+            height: 42px;
+            padding: 0 18px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            filter: brightness(0.95);
+        }
+
+        .botao-principal {
+            background-color: var(--cor-principal);
+            color: var(--cor-branca);
+        }
+
+        .botao-secundario {
+            background-color: #e4ebef;
+            color: #37474f;
+        }
+
+        .botao-perigo {
+            background-color: #ffebee;
+            color: var(--cor-perigo);
+        }
+
+        .resumo {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .cartao {
+            background-color: var(--cor-branca);
+            border-radius: 9px;
+            padding: 18px;
+            border-left: 5px solid var(--cor-principal);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
+        }
+
+        .cartao span {
+            display: block;
+            color: #607d8b;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .cartao strong {
+            font-size: 25px;
+        }
+
+        .filtros {
+            display: grid;
+            grid-template-columns: minmax(250px, 1fr) 220px 260px auto auto auto;
+            gap: 12px;
+            align-items: end;
+            margin-bottom: 18px;
+        }
+
+        .tabela-container {
+            overflow-x: auto;
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 1000px;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: var(--cor-principal-escura);
+            color: var(--cor-branca);
+        }
+
+        th,
+        td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--cor-borda);
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background-color: #f7fafc;
+        }
+
+        td select {
+            min-width: 150px;
+            height: 36px;
+        }
+
+        .canal {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background-color: #e3f2fd;
+            color: #1565c0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-aprovado {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-reprovado {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .status-nao-respondido {
+            background-color: #fff8e1;
+            color: #ef6c00;
+        }
+
+        .status-atualizacao {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .status-select {
+            font-weight: bold;
+            border-width: 2px;
+        }
+
+        .acoes {
+            display: flex;
+            gap: 6px;
+        }
+
+        .botao-excluir {
+            height: 34px;
+            padding: 0 12px;
+            background-color: #ffebee;
+            color: var(--cor-perigo);
+        }
+
+        .menu-acoes {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 6px;
+            min-width: 92px;
+        }
+
+        .botao-menu-acoes {
+            width: 44px;
+            height: 34px;
+            padding: 0;
+            align-self: flex-end;
+            background-color: #e4ebef;
+            color: #37474f;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .opcoes-acoes {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            padding: 7px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 7px;
+            background-color: var(--cor-branca);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.10);
+        }
+
+        .opcoes-acoes.aberto {
+            display: flex;
+        }
+
+        .botao-editar,
+        .botao-excluir-menu {
+            width: 100%;
+            height: 32px;
+            padding: 0 10px;
+            text-align: left;
+        }
+
+        .botao-editar {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .botao-excluir-menu {
+            background-color: #ffebee;
+            color: var(--cor-perigo);
+        }
+
+        .modal-fundo {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            padding: 20px;
+            background-color: rgba(15, 35, 45, 0.62);
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .modal-fundo.aberto {
+            display: flex;
+        }
+
+        .modal-conteudo {
+            width: min(780px, 100%);
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            background-color: var(--cor-branca);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.28);
+        }
+
+        .modal-cabecalho {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .modal-cabecalho h2 {
+            margin: 0;
+            color: var(--cor-principal-escura);
+        }
+
+        .botao-fechar-modal {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            background-color: #eceff1;
+            color: #455a64;
+            font-size: 22px;
+        }
+
+        .formulario-edicao {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .acoes-modal {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .botao-cancelar {
+            background-color: #e4ebef;
+            color: #37474f;
+        }
+
+        @media (max-width: 650px) {
+            .formulario-edicao {
+                grid-template-columns: 1fr;
+            }
+
+            .acoes-modal {
+                flex-direction: column-reverse;
+            }
+
+            .acoes-modal button {
+                width: 100%;
+            }
+        }
+
+
+        .sem-registros {
+            text-align: center;
+            color: #78909c;
+            padding: 30px;
+        }
+
+        .rodape-informacao {
+            margin-top: 14px;
+            font-size: 12px;
+            color: #78909c;
+        }
+
+        .status-respondido-analise {
+            background-color: #f3e5f5;
+            color: #6a1b9a;
+        }
+
+        .abas-navegacao {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .botao-aba {
+            background-color: #e4ebef;
+            color: #37474f;
+        }
+
+        .botao-aba.ativo {
+            background-color: var(--cor-principal);
+            color: var(--cor-branca);
+        }
+
+        .conteudo-aba {
+            display: none;
+        }
+
+        .conteudo-aba.ativo {
+            display: block;
+        }
+
+        .resumo-graficos {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .painel-graficos {
+            display: grid;
+            grid-template-columns: minmax(320px, 2fr) minmax(280px, 1fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .grafico-canvas {
+            width: 100%;
+            height: 380px;
+            display: block;
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            background-color: #fcfdfe;
+        }
+
+        .legenda-status {
+            display: grid;
+            gap: 12px;
+        }
+
+        .indicador-status {
+            background-color: #f7fafc;
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .indicador-topo {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .barra-status {
+            height: 12px;
+            background-color: #e4ebef;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .barra-status-preenchimento {
+            height: 100%;
+            border-radius: 999px;
+        }
+
+        .grafico-info {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #607d8b;
+        }
+
+        .grafico-canais-canvas {
+            width: 100%;
+            height: 350px;
+            display: block;
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            background-color: #fcfdfe;
+        }
+
+        .resumo-canais {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .cartao-canal {
+            background-color: #f7fafc;
+            border: 1px solid var(--cor-borda);
+            border-radius: 9px;
+            padding: 16px;
+        }
+
+        .cartao-canal span {
+            display: block;
+            color: #607d8b;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .cartao-canal strong {
+            display: block;
+            font-size: 24px;
+            color: var(--cor-principal-escura);
+        }
+
+        .cartao-canal small {
+            display: block;
+            margin-top: 5px;
+            color: #78909c;
+        }
+
+
+
+        @media (max-width: 950px) {
+            .formulario {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .resumo {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .resumo-graficos {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .resumo-canais {
+                grid-template-columns: 1fr;
+            }
+
+            .filtros {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .painel-graficos {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 21px;
+            }
+
+            main {
+                padding: 0 12px 30px;
+            }
+
+            .formulario,
+            .resumo,
+            .resumo-graficos,
+            .resumo-canais,
+            .filtros {
+                grid-template-columns: 1fr;
+            }
+
+            .abas-navegacao {
+                flex-direction: column;
+            }
+        }
+
+        .aplicacao-bloqueada > header,
+        .aplicacao-bloqueada > main {
+            display: none;
+        }
+
+        .tela-login {
+            min-height: 100vh;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                linear-gradient(135deg, var(--cor-principal), var(--cor-principal-escura));
+        }
+
+        .tela-login.oculta {
+            display: none;
+        }
+
+        .login-card {
+            width: min(430px, 100%);
+            background-color: var(--cor-branca);
+            border-radius: 14px;
+            padding: 30px;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+        }
+
+        .login-card h1 {
+            margin: 0 0 7px;
+            color: var(--cor-principal-escura);
+            font-size: 25px;
+        }
+
+        .login-card .login-subtitulo {
+            margin: 0 0 24px;
+            color: #607d8b;
+            line-height: 1.45;
+        }
+
+        .form-login {
+            display: grid;
+            gap: 15px;
+        }
+
+        .botao-login {
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .login-mensagem {
+            min-height: 20px;
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--cor-perigo);
+        }
+
+        .login-observacao {
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid var(--cor-borda);
+            font-size: 12px;
+            color: #78909c;
+            line-height: 1.5;
+        }
+
+        .usuario-logado {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .usuario-logado span {
+            font-size: 13px;
+            opacity: 0.92;
+        }
+
+        .botao-sair {
+            height: 34px;
+            padding: 0 13px;
+            background-color: rgba(255, 255, 255, 0.16);
+            color: var(--cor-branca);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+        }
+
+        .status-sincronizacao {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-weight: bold;
+        }
+
+        .status-sincronizacao::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #90a4ae;
+        }
+
+        .status-sincronizacao.online::before {
+            background-color: #2e7d32;
+        }
+
+        .status-sincronizacao.erro::before {
+            background-color: #c62828;
+        }
+
+        button:disabled {
+            opacity: 0.65;
+            cursor: wait;
+            transform: none;
+        }
+
+    </style>
+</head>
+
+<body class="aplicacao-bloqueada">
+
+<div id="telaLogin" class="tela-login">
+    <div class="login-card">
+        <h1>Limerpak — Assistência Técnica</h1>
+        <p class="login-subtitulo">
+            Acompanhamento de cobranças e aprovações de orçamentos
+        </p>
+
+        <form id="formLogin" class="form-login">
+            <div class="campo">
+                <label for="loginEmail">E-mail</label>
+                <input
+                    type="email"
+                    id="loginEmail"
+                    autocomplete="username"
+                    placeholder="seuemail@empresa.com"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="loginSenha">Senha</label>
+                <input
+                    type="password"
+                    id="loginSenha"
+                    autocomplete="current-password"
+                    placeholder="Digite sua senha"
+                    required
+                >
+            </div>
+
+            <button
+                type="submit"
+                id="botaoEntrar"
+                class="botao-principal botao-login"
+            >
+                Entrar
+            </button>
+        </form>
+
+        <div id="loginMensagem" class="login-mensagem"></div>
+
+        <div class="login-observacao">
+            O acesso é restrito aos usuários cadastrados no Firebase
+            Authentication da Limerpak.
+        </div>
+    </div>
+</div>
+
+<header>
+    <div class="cabecalho-conteudo">
+        <h1>Limerpak — Assistência Técnica</h1>
+        <p>Acompanhamento de cobranças e aprovações de orçamentos</p>
+
+        <div class="usuario-logado">
+            <span>
+                Usuário:
+                <strong id="emailUsuarioLogado">—</strong>
+            </span>
+
+            <button
+                type="button"
+                id="botaoSair"
+                class="botao-sair"
+            >
+                Sair
+            </button>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <div class="abas-navegacao">
+        <button
+            type="button"
+            class="botao-aba ativo"
+            id="botaoAbaAcompanhamento"
+        >
+            Acompanhamento
+        </button>
+
+        <button
+            type="button"
+            class="botao-aba"
+            id="botaoAbaGraficos"
+        >
+            Gráficos
+        </button>
+    </div>
+
+    <div id="abaAcompanhamento" class="conteudo-aba ativo">
+
+    <section class="painel">
+        <h2>Registrar nova cobrança</h2>
+
+        <form id="formCobranca" class="formulario">
+
+            <div class="campo">
+                <label for="ordemServico">O.S.</label>
+                <input
+                    type="text"
+                    id="ordemServico"
+                    placeholder="Ex.: 12345"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="nomeCliente">Nome do cliente</label>
+                <input
+                    type="text"
+                    id="nomeCliente"
+                    placeholder="Ex.: Carlos Silva"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="empresa">Empresa</label>
+                <input
+                    type="text"
+                    id="empresa"
+                    placeholder="Ex.: Empresa ABC"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="canal">Forma de cobrança</label>
+                <select id="canal" required>
+                    <option value="">Selecione</option>
+                    <option value="BOT">BOT</option>
+                    <option value="E-mail">E-mail</option>
+                    <option value="Telefone">Telefone</option>
+                </select>
+            </div>
+
+            <div class="campo">
+                <label for="valorManutencao">Valor da manutenção</label>
+                <input
+                    type="text"
+                    id="valorManutencao"
+                    inputmode="decimal"
+                    placeholder="Ex.: 1.250,00"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="status">Situação</label>
+                <select id="status" required>
+                    <option value="Não respondido">Não respondido</option>
+                    <option value="Aprovado">Aprovado</option>
+                    <option value="Reprovado">Reprovado</option>
+                    <option value="Atualização">Atualização</option>
+                    <option value="Respondido - Em análise">Respondido - Em análise</option>
+                </select>
+            </div>
+
+            <button type="submit" class="botao-principal">
+                Registrar cobrança
+            </button>
+
+        </form>
+    </section>
+
+    <section class="resumo">
+        <div class="cartao">
+            <span>Total de registros</span>
+            <strong id="totalRegistros">0</strong>
+        </div>
+
+        <div class="cartao">
+            <span>Aprovados</span>
+            <strong id="totalAprovados">0</strong>
+        </div>
+
+        <div class="cartao">
+            <span>Não respondidos</span>
+            <strong id="totalNaoRespondidos">0</strong>
+        </div>
+
+        <div class="cartao">
+            <span>Em atualização</span>
+            <strong id="totalAtualizacoes">0</strong>
+        </div>
+
+        <div class="cartao">
+            <span>Valor total aprovado</span>
+            <strong id="valorTotalAprovado">R$ 0,00</strong>
+        </div>
+    </section>
+
+    <section class="painel">
+        <h2>Histórico de cobranças</h2>
+
+        <div class="filtros">
+
+            <div class="campo">
+                <label for="pesquisa">Pesquisar cliente ou empresa</label>
+                <input
+                    type="search"
+                    id="pesquisa"
+                    placeholder="Digite O.S., cliente ou empresa"
+                >
+            </div>
+
+            <div class="campo">
+                <label for="filtroStatus">Filtrar por situação</label>
+                <select id="filtroStatus">
+                    <option value="">Todos</option>
+                    <option value="Aprovado">Aprovados</option>
+                    <option value="Reprovado">Reprovados</option>
+                    <option value="Não respondido">Não respondidos</option>
+                    <option value="Atualização">Atualização</option>
+                    <option value="Respondido - Em análise">Respondido - Em análise</option>
+                </select>
+            </div>
+
+            <div class="campo">
+                <label for="ordenacaoTabela">Ordenar por</label>
+                <select id="ordenacaoTabela">
+                    <option value="">Ordem atual</option>
+                    <option value="cliente-az">Cliente: A até Z</option>
+                    <option value="cliente-za">Cliente: Z até A</option>
+                    <option value="data-desc">Data: mais recente primeiro</option>
+                    <option value="data-asc">Data: mais antiga primeiro</option>
+                    <option value="os-desc">O.S.: maior para menor</option>
+                    <option value="os-asc">O.S.: menor para maior</option>
+                </select>
+            </div>
+
+            <button
+                type="button"
+                class="botao-secundario"
+                id="botaoImportar"
+            >
+                Importar CSV
+            </button>
+
+            <input
+                type="file"
+                id="arquivoImportacao"
+                accept=".csv,text/csv"
+                hidden
+            >
+
+            <button
+                type="button"
+                class="botao-secundario"
+                id="botaoExportar"
+            >
+                Exportar CSV
+            </button>
+
+            <button
+                type="button"
+                class="botao-perigo"
+                id="botaoLimpar"
+            >
+                Apagar tudo
+            </button>
+
+        </div>
+
+        <div class="tabela-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nº</th>
+                        <th>O.S.</th>
+                        <th>Cliente</th>
+                        <th>Empresa</th>
+                        <th>Canal</th>
+                        <th>Data e hora da cobrança</th>
+                        <th>Valor da manutenção</th>
+                        <th>Situação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody id="corpoTabela"></tbody>
+            </table>
+        </div>
+
+        <div class="rodape-informacao">
+            <span id="statusSincronizacao" class="status-sincronizacao">
+                Aguardando conexão com o Firebase...
+            </span>
+        </div>
+    </section>
+
+
+    </div>
+
+    <div id="abaGraficos" class="conteudo-aba">
+        <section class="resumo-graficos">
+            <div class="cartao">
+                <span>Total de orçamentos cobrados</span>
+                <strong id="graficoTotalCobrados">0</strong>
+            </div>
+
+            <div class="cartao">
+                <span>Total de aprovados</span>
+                <strong id="graficoTotalAprovados">0</strong>
+            </div>
+
+            <div class="cartao">
+                <span>Total de reprovados</span>
+                <strong id="graficoTotalReprovados">0</strong>
+            </div>
+
+            <div class="cartao">
+                <span>Taxa de aprovação</span>
+                <strong id="graficoTaxaAprovacao">0%</strong>
+            </div>
+        </section>
+
+        <section class="painel">
+            <h2>Relação gráfica dos orçamentos</h2>
+
+            <div class="painel-graficos">
+                <div>
+                    <canvas
+                        id="graficoStatusCanvas"
+                        class="grafico-canvas"
+                    ></canvas>
+
+                    <div class="grafico-info">
+                        O gráfico apresenta a distribuição dos orçamentos por situação.
+                    </div>
+                </div>
+
+                <div>
+                    <div id="listaIndicadoresStatus" class="legenda-status"></div>
+
+                    <div class="rodape-informacao">
+                        O valor total aprovado é recalculado automaticamente conforme as alterações na tabela.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="painel">
+            <h2>Aprovações por forma de cobrança</h2>
+
+            <div class="resumo-canais">
+                <div class="cartao-canal">
+                    <span>Telefone</span>
+                    <strong id="percentualAprovadoTelefone">0%</strong>
+                    <small id="quantidadeAprovadoTelefone">0 aprovado(s)</small>
+                </div>
+
+                <div class="cartao-canal">
+                    <span>BOT</span>
+                    <strong id="percentualAprovadoBot">0%</strong>
+                    <small id="quantidadeAprovadoBot">0 aprovado(s)</small>
+                </div>
+
+                <div class="cartao-canal">
+                    <span>E-mail</span>
+                    <strong id="percentualAprovadoEmail">0%</strong>
+                    <small id="quantidadeAprovadoEmail">0 aprovado(s)</small>
+                </div>
+            </div>
+
+            <div class="painel-graficos">
+                <div>
+                    <canvas
+                        id="graficoCanaisAprovadosCanvas"
+                        class="grafico-canais-canvas"
+                    ></canvas>
+
+                    <div class="grafico-info">
+                        Percentuais calculados sobre o total de orçamentos aprovados.
+                    </div>
+                </div>
+
+                <div>
+                    <div
+                        id="listaIndicadoresCanaisAprovados"
+                        class="legenda-status"
+                    ></div>
+
+                    <div class="rodape-informacao">
+                        Ao alterar a situação ou a forma de cobrança, este comparativo é atualizado automaticamente.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="painel">
+            <h2>Valor aprovado</h2>
+
+            <div class="cartao">
+                <span>Valor total de orçamentos aprovados</span>
+                <strong id="graficoValorTotalAprovado">R$ 0,00</strong>
+            </div>
+        </section>
+    </div>
+</main>
+
+
+<div id="modalEdicao" class="modal-fundo" aria-hidden="true">
+    <div class="modal-conteudo" role="dialog" aria-modal="true" aria-labelledby="tituloModalEdicao">
+        <div class="modal-cabecalho">
+            <h2 id="tituloModalEdicao">Editar cobrança</h2>
+
+            <button
+                type="button"
+                id="botaoFecharModal"
+                class="botao-fechar-modal"
+                aria-label="Fechar"
+            >
+                ×
+            </button>
+        </div>
+
+        <form id="formEdicao">
+            <div class="formulario-edicao">
+                <div class="campo">
+                    <label for="editarOrdemServico">O.S.</label>
+                    <input type="text" id="editarOrdemServico" required>
+                </div>
+
+                <div class="campo">
+                    <label for="editarNomeCliente">Nome do cliente</label>
+                    <input type="text" id="editarNomeCliente" required>
+                </div>
+
+                <div class="campo">
+                    <label for="editarEmpresa">Empresa</label>
+                    <input type="text" id="editarEmpresa" required>
+                </div>
+
+                <div class="campo">
+                    <label for="editarCanal">Forma de cobrança</label>
+                    <select id="editarCanal" required>
+                        <option value="BOT">BOT</option>
+                        <option value="E-mail">E-mail</option>
+                        <option value="Telefone">Telefone</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="editarDataHora">Data e hora da cobrança</label>
+                    <input type="datetime-local" id="editarDataHora" required>
+                </div>
+
+                <div class="campo">
+                    <label for="editarValorManutencao">Valor da manutenção</label>
+                    <input
+                        type="text"
+                        id="editarValorManutencao"
+                        inputmode="decimal"
+                        required
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="editarStatus">Situação</label>
+                    <select id="editarStatus" required>
+                        <option value="Aprovado">Aprovado</option>
+                        <option value="Reprovado">Reprovado</option>
+                        <option value="Não respondido">Não respondido</option>
+                        <option value="Atualização">Atualização</option>
+                        <option value="Respondido - Em análise">Respondido - Em análise</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="acoes-modal">
+                <button
+                    type="button"
+                    id="botaoCancelarEdicao"
+                    class="botao-cancelar"
+                >
+                    Cancelar
+                </button>
+
+                <button type="submit" class="botao-principal">
+                    Salvar alterações
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+        getAuth,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+        getFirestore,
+        collection,
+        addDoc,
+        doc,
+        updateDoc,
+        deleteDoc,
+        onSnapshot,
+        getDocs,
+        writeBatch,
+        serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyC-BQv3nCprZpuzutwKEBga4sz7mLF1oPK",
+        authDomain: "orcamentossmi-56a81.firebaseapp.com",
+        projectId: "orcamentossmi-56a81",
+        storageBucket: "orcamentossmi-56a81.firebasestorage.app",
+        messagingSenderId: "422471640431",
+        appId: "1:422471640431:web:62527c251cb4c105cb349a",
+        measurementId: "G-85B12PFTQY"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const auth = getAuth(firebaseApp);
+    const db = getFirestore(firebaseApp);
+    const colecaoOrcamentos = collection(db, "orcamentos");
+
+    const telaLogin = document.getElementById("telaLogin");
+    const formLogin = document.getElementById("formLogin");
+    const loginEmail = document.getElementById("loginEmail");
+    const loginSenha = document.getElementById("loginSenha");
+    const botaoEntrar = document.getElementById("botaoEntrar");
+    const loginMensagem = document.getElementById("loginMensagem");
+    const botaoSair = document.getElementById("botaoSair");
+    const emailUsuarioLogado =
+        document.getElementById("emailUsuarioLogado");
+    const statusSincronizacao =
+        document.getElementById("statusSincronizacao");
+
+    const botaoAbaAcompanhamento =
+        document.getElementById("botaoAbaAcompanhamento");
+    const botaoAbaGraficos =
+        document.getElementById("botaoAbaGraficos");
+    const abaAcompanhamento =
+        document.getElementById("abaAcompanhamento");
+    const abaGraficos =
+        document.getElementById("abaGraficos");
+
+    const formCobranca = document.getElementById("formCobranca");
+    const ordemServico = document.getElementById("ordemServico");
+    const nomeCliente = document.getElementById("nomeCliente");
+    const empresa = document.getElementById("empresa");
+    const canal = document.getElementById("canal");
+    const valorManutencao = document.getElementById("valorManutencao");
+    const status = document.getElementById("status");
+    const botaoRegistrar =
+        formCobranca.querySelector('button[type="submit"]');
+
+    const pesquisa = document.getElementById("pesquisa");
+    const filtroStatus = document.getElementById("filtroStatus");
+    const ordenacaoTabela =
+        document.getElementById("ordenacaoTabela");
+    const corpoTabela = document.getElementById("corpoTabela");
+
+    const totalRegistros = document.getElementById("totalRegistros");
+    const totalAprovados = document.getElementById("totalAprovados");
+    const totalNaoRespondidos =
+        document.getElementById("totalNaoRespondidos");
+    const totalAtualizacoes =
+        document.getElementById("totalAtualizacoes");
+    const valorTotalAprovado =
+        document.getElementById("valorTotalAprovado");
+
+    const graficoTotalCobrados =
+        document.getElementById("graficoTotalCobrados");
+    const graficoTotalAprovados =
+        document.getElementById("graficoTotalAprovados");
+    const graficoTotalReprovados =
+        document.getElementById("graficoTotalReprovados");
+    const graficoTaxaAprovacao =
+        document.getElementById("graficoTaxaAprovacao");
+    const graficoValorTotalAprovado =
+        document.getElementById("graficoValorTotalAprovado");
+    const graficoStatusCanvas =
+        document.getElementById("graficoStatusCanvas");
+    const listaIndicadoresStatus =
+        document.getElementById("listaIndicadoresStatus");
+
+    const graficoCanaisAprovadosCanvas =
+        document.getElementById("graficoCanaisAprovadosCanvas");
+    const listaIndicadoresCanaisAprovados =
+        document.getElementById("listaIndicadoresCanaisAprovados");
+    const percentualAprovadoTelefone =
+        document.getElementById("percentualAprovadoTelefone");
+    const quantidadeAprovadoTelefone =
+        document.getElementById("quantidadeAprovadoTelefone");
+    const percentualAprovadoBot =
+        document.getElementById("percentualAprovadoBot");
+    const quantidadeAprovadoBot =
+        document.getElementById("quantidadeAprovadoBot");
+    const percentualAprovadoEmail =
+        document.getElementById("percentualAprovadoEmail");
+    const quantidadeAprovadoEmail =
+        document.getElementById("quantidadeAprovadoEmail");
+
+    const modalEdicao = document.getElementById("modalEdicao");
+    const formEdicao = document.getElementById("formEdicao");
+    const botaoFecharModal =
+        document.getElementById("botaoFecharModal");
+    const botaoCancelarEdicao =
+        document.getElementById("botaoCancelarEdicao");
+    const editarOrdemServico =
+        document.getElementById("editarOrdemServico");
+    const editarNomeCliente =
+        document.getElementById("editarNomeCliente");
+    const editarEmpresa =
+        document.getElementById("editarEmpresa");
+    const editarCanal =
+        document.getElementById("editarCanal");
+    const editarDataHora =
+        document.getElementById("editarDataHora");
+    const editarValorManutencao =
+        document.getElementById("editarValorManutencao");
+    const editarStatus =
+        document.getElementById("editarStatus");
+    const botaoSalvarEdicao =
+        formEdicao.querySelector('button[type="submit"]');
+
+    const botaoImportar = document.getElementById("botaoImportar");
+    const arquivoImportacao =
+        document.getElementById("arquivoImportacao");
+    const botaoExportar = document.getElementById("botaoExportar");
+    const botaoLimpar = document.getElementById("botaoLimpar");
+
+    let cobrancas = [];
+    let registroEmEdicaoId = null;
+    let cancelarEscutaFirestore = null;
+
+    const CONFIGURACOES_CANAIS = [
+        { nome: "Telefone", cor: "#00897b" },
+        { nome: "BOT", cor: "#5e35b1" },
+        { nome: "E-mail", cor: "#1e88e5" }
+    ];
+
+    const CONFIGURACOES_STATUS = [
+        { nome: "Aprovado", cor: "#2e7d32" },
+        { nome: "Reprovado", cor: "#c62828" },
+        { nome: "Não respondido", cor: "#ef6c00" },
+        { nome: "Atualização", cor: "#1565c0" },
+        { nome: "Respondido - Em análise", cor: "#6a1b9a" }
+    ];
+
+    function definirStatusSincronizacao(texto, tipo = "") {
+        statusSincronizacao.textContent = texto;
+        statusSincronizacao.classList.remove("online", "erro");
+
+        if (tipo) {
+            statusSincronizacao.classList.add(tipo);
+        }
+    }
+
+    function traduzirErroLogin(erro) {
+        const mensagens = {
+            "auth/invalid-credential": "E-mail ou senha incorretos.",
+            "auth/invalid-login-credentials": "E-mail ou senha incorretos.",
+            "auth/user-disabled": "Este usuário está desativado.",
+            "auth/too-many-requests":
+                "Muitas tentativas. Aguarde alguns minutos e tente novamente.",
+            "auth/network-request-failed":
+                "Não foi possível conectar ao Firebase. Verifique a internet.",
+            "auth/invalid-email": "Informe um endereço de e-mail válido."
+        };
+
+        return mensagens[erro.code] ||
+            "Não foi possível entrar. Confira o e-mail e a senha.";
+    }
+
+    function formatarData(dataISO) {
+        const data = new Date(dataISO);
+
+        if (Number.isNaN(data.getTime())) {
+            return "—";
+        }
+
+        return data.toLocaleString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+    }
+
+    function formatarMoeda(valor) {
+        return Number(valor || 0).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        });
+    }
+
+    function converterValorParaNumero(valorDigitado) {
+        const texto = String(valorDigitado)
+            .trim()
+            .replace(/R\$/gi, "")
+            .replace(/\s/g, "");
+
+        if (!texto) {
+            return 0;
+        }
+
+        let valorNormalizado = texto;
+
+        if (texto.includes(",") && texto.includes(".")) {
+            valorNormalizado = texto.replace(/\./g, "").replace(",", ".");
+        } else if (texto.includes(",")) {
+            valorNormalizado = texto.replace(",", ".");
+        }
+
+        const numero = Number(valorNormalizado);
+        return Number.isFinite(numero) ? numero : NaN;
+    }
+
+    function alternarAba(nomeAba) {
+        const acompanharAtivo = nomeAba === "acompanhamento";
+
+        abaAcompanhamento.classList.toggle("ativo", acompanharAtivo);
+        abaGraficos.classList.toggle("ativo", !acompanharAtivo);
+
+        botaoAbaAcompanhamento.classList.toggle(
+            "ativo",
+            acompanharAtivo
+        );
+        botaoAbaGraficos.classList.toggle(
+            "ativo",
+            !acompanharAtivo
+        );
+
+        if (!acompanharAtivo) {
+            atualizarGraficos();
+        }
+    }
+
+    function obterResumoStatus() {
+        const resumo = {
+            total: cobrancas.length,
+            valorTotalAprovado: 0,
+            porStatus: {},
+            aprovadosPorCanal: {
+                "Telefone": 0,
+                "BOT": 0,
+                "E-mail": 0
+            }
+        };
+
+        CONFIGURACOES_STATUS.forEach(configuracao => {
+            resumo.porStatus[configuracao.nome] = 0;
+        });
+
+        cobrancas.forEach(cobranca => {
+            if (resumo.porStatus[cobranca.status] == null) {
+                resumo.porStatus[cobranca.status] = 0;
+            }
+
+            resumo.porStatus[cobranca.status] += 1;
+
+            if (cobranca.status === "Aprovado") {
+                resumo.valorTotalAprovado += Number(
+                    cobranca.valorManutencao || 0
+                );
+
+                if (
+                    resumo.aprovadosPorCanal[cobranca.canal] != null
+                ) {
+                    resumo.aprovadosPorCanal[cobranca.canal] += 1;
+                }
+            }
+        });
+
+        resumo.aprovados = resumo.porStatus["Aprovado"] || 0;
+        resumo.reprovados = resumo.porStatus["Reprovado"] || 0;
+        resumo.naoRespondidos =
+            resumo.porStatus["Não respondido"] || 0;
+        resumo.atualizacoes =
+            resumo.porStatus["Atualização"] || 0;
+        resumo.respondidosEmAnalise =
+            resumo.porStatus["Respondido - Em análise"] || 0;
+        resumo.taxaAprovacao = resumo.total > 0
+            ? (resumo.aprovados / resumo.total) * 100
+            : 0;
+
+        return resumo;
+    }
+
+    function obterLinhasLegendaStatus(texto) {
+        const mapa = {
+            "Não respondido": ["Não", "respondido"],
+            "Respondido - Em análise": ["Respondido", "Em análise"]
+        };
+
+        return mapa[texto] || [texto];
+    }
+
+    function renderizarIndicadoresStatus(resumo) {
+        listaIndicadoresStatus.innerHTML = "";
+
+        const total = resumo.total || 0;
+
+        CONFIGURACOES_STATUS.forEach(configuracao => {
+            const quantidade = resumo.porStatus[configuracao.nome] || 0;
+            const percentual = total > 0
+                ? (quantidade / total) * 100
+                : 0;
+
+            const bloco = document.createElement("div");
+            bloco.className = "indicador-status";
+
+            bloco.innerHTML = `
+                <div class="indicador-topo">
+                    <span>${configuracao.nome}</span>
+                    <span>${quantidade} (${percentual.toFixed(1)}%)</span>
+                </div>
+                <div class="barra-status">
+                    <div
+                        class="barra-status-preenchimento"
+                        style="width: ${percentual}%; background-color: ${configuracao.cor};"
+                    ></div>
+                </div>
+            `;
+
+            listaIndicadoresStatus.appendChild(bloco);
+        });
+    }
+
+    function desenharGraficoStatus(resumo) {
+        const canvas = graficoStatusCanvas;
+        const contexto = canvas.getContext("2d");
+        const largura = Math.max(canvas.clientWidth || 0, 320);
+        const altura = 380;
+        const dpr = window.devicePixelRatio || 1;
+
+        canvas.width = largura * dpr;
+        canvas.height = altura * dpr;
+        canvas.style.width = largura + "px";
+        canvas.style.height = altura + "px";
+
+        contexto.setTransform(dpr, 0, 0, dpr, 0, 0);
+        contexto.clearRect(0, 0, largura, altura);
+
+        const dados = CONFIGURACOES_STATUS.map(configuracao => ({
+            ...configuracao,
+            valor: resumo.porStatus[configuracao.nome] || 0
+        }));
+
+        if (dados.every(item => item.valor === 0)) {
+            contexto.fillStyle = "#78909c";
+            contexto.font = "16px Arial";
+            contexto.textAlign = "center";
+            contexto.fillText(
+                "Ainda não há registros para gerar o gráfico.",
+                largura / 2,
+                altura / 2
+            );
+            return;
+        }
+
+        const margem = {
+            superior: 30,
+            direita: 20,
+            inferior: 95,
+            esquerda: 55
+        };
+
+        const areaLargura =
+            largura - margem.esquerda - margem.direita;
+        const areaAltura =
+            altura - margem.superior - margem.inferior;
+
+        const maximo = Math.max(
+            ...dados.map(item => item.valor),
+            1
+        );
+
+        contexto.strokeStyle = "#d9e1e6";
+        contexto.lineWidth = 1;
+
+        for (let indice = 0; indice <= 4; indice++) {
+            const y =
+                margem.superior + (areaAltura / 4) * indice;
+
+            contexto.beginPath();
+            contexto.moveTo(margem.esquerda, y);
+            contexto.lineTo(largura - margem.direita, y);
+            contexto.stroke();
+
+            const valorLinha = Math.round(
+                maximo - (maximo / 4) * indice
+            );
+
+            contexto.fillStyle = "#607d8b";
+            contexto.font = "12px Arial";
+            contexto.textAlign = "right";
+            contexto.fillText(
+                String(valorLinha),
+                margem.esquerda - 8,
+                y + 4
+            );
+        }
+
+        contexto.beginPath();
+        contexto.moveTo(margem.esquerda, margem.superior);
+        contexto.lineTo(
+            margem.esquerda,
+            altura - margem.inferior
+        );
+        contexto.lineTo(
+            largura - margem.direita,
+            altura - margem.inferior
+        );
+        contexto.strokeStyle = "#90a4ae";
+        contexto.stroke();
+
+        const espaco = areaLargura / dados.length;
+        const larguraBarra = Math.min(70, espaco * 0.55);
+
+        dados.forEach((item, indice) => {
+            const alturaBarra =
+                (item.valor / maximo) * areaAltura;
+            const x =
+                margem.esquerda +
+                indice * espaco +
+                (espaco - larguraBarra) / 2;
+            const y =
+                margem.superior +
+                areaAltura -
+                alturaBarra;
+
+            contexto.fillStyle = item.cor;
+            contexto.fillRect(x, y, larguraBarra, alturaBarra);
+
+            contexto.fillStyle = "#263238";
+            contexto.font = "bold 12px Arial";
+            contexto.textAlign = "center";
+            contexto.fillText(
+                String(item.valor),
+                x + larguraBarra / 2,
+                y - 8
+            );
+
+            const linhas = obterLinhasLegendaStatus(item.nome);
+
+            contexto.fillStyle = "#455a64";
+            contexto.font = "12px Arial";
+
+            linhas.forEach((linha, linhaIndice) => {
+                contexto.fillText(
+                    linha,
+                    x + larguraBarra / 2,
+                    altura - margem.inferior +
+                        18 +
+                        (linhaIndice * 16)
+                );
+            });
+        });
+    }
+
+    function renderizarIndicadoresCanaisAprovados(resumo) {
+        listaIndicadoresCanaisAprovados.innerHTML = "";
+
+        const totalAprovados = resumo.aprovados || 0;
+
+        CONFIGURACOES_CANAIS.forEach(configuracao => {
+            const quantidade =
+                resumo.aprovadosPorCanal[configuracao.nome] || 0;
+            const percentual = totalAprovados > 0
+                ? (quantidade / totalAprovados) * 100
+                : 0;
+
+            const bloco = document.createElement("div");
+            bloco.className = "indicador-status";
+
+            bloco.innerHTML = `
+                <div class="indicador-topo">
+                    <span>${configuracao.nome}</span>
+                    <span>${quantidade} (${percentual.toFixed(1)}%)</span>
+                </div>
+                <div class="barra-status">
+                    <div
+                        class="barra-status-preenchimento"
+                        style="width: ${percentual}%; background-color: ${configuracao.cor};"
+                    ></div>
+                </div>
+            `;
+
+            listaIndicadoresCanaisAprovados.appendChild(bloco);
+        });
+    }
+
+    function desenharGraficoCanaisAprovados(resumo) {
+        const canvas = graficoCanaisAprovadosCanvas;
+        const contexto = canvas.getContext("2d");
+        const largura = Math.max(canvas.clientWidth || 0, 320);
+        const altura = 350;
+        const dpr = window.devicePixelRatio || 1;
+
+        canvas.width = largura * dpr;
+        canvas.height = altura * dpr;
+        canvas.style.width = largura + "px";
+        canvas.style.height = altura + "px";
+
+        contexto.setTransform(dpr, 0, 0, dpr, 0, 0);
+        contexto.clearRect(0, 0, largura, altura);
+
+        const totalAprovados = resumo.aprovados || 0;
+
+        if (totalAprovados === 0) {
+            contexto.fillStyle = "#78909c";
+            contexto.font = "16px Arial";
+            contexto.textAlign = "center";
+            contexto.fillText(
+                "Ainda não há orçamentos aprovados.",
+                largura / 2,
+                altura / 2
+            );
+            return;
+        }
+
+        const centroX = largura / 2;
+        const centroY = altura / 2 - 10;
+        const raioExterno = Math.min(largura, altura) * 0.31;
+        const raioInterno = raioExterno * 0.58;
+        let anguloInicial = -Math.PI / 2;
+
+        CONFIGURACOES_CANAIS.forEach(configuracao => {
+            const quantidade =
+                resumo.aprovadosPorCanal[configuracao.nome] || 0;
+            const proporcao = quantidade / totalAprovados;
+            const anguloFinal =
+                anguloInicial + proporcao * Math.PI * 2;
+
+            if (quantidade > 0) {
+                contexto.beginPath();
+                contexto.arc(
+                    centroX,
+                    centroY,
+                    raioExterno,
+                    anguloInicial,
+                    anguloFinal
+                );
+                contexto.arc(
+                    centroX,
+                    centroY,
+                    raioInterno,
+                    anguloFinal,
+                    anguloInicial,
+                    true
+                );
+                contexto.closePath();
+                contexto.fillStyle = configuracao.cor;
+                contexto.fill();
+            }
+
+            anguloInicial = anguloFinal;
+        });
+
+        contexto.fillStyle = "#263238";
+        contexto.textAlign = "center";
+        contexto.font = "bold 28px Arial";
+        contexto.fillText(
+            String(totalAprovados),
+            centroX,
+            centroY + 4
+        );
+
+        contexto.fillStyle = "#607d8b";
+        contexto.font = "13px Arial";
+        contexto.fillText(
+            "aprovados",
+            centroX,
+            centroY + 27
+        );
+    }
+
+    function atualizarComparativoCanaisAprovados(resumo) {
+        const totalAprovados = resumo.aprovados || 0;
+
+        const atualizarCanal = (
+            nomeCanal,
+            elementoPercentual,
+            elementoQuantidade
+        ) => {
+            const quantidade =
+                resumo.aprovadosPorCanal[nomeCanal] || 0;
+            const percentual = totalAprovados > 0
+                ? (quantidade / totalAprovados) * 100
+                : 0;
+
+            elementoPercentual.textContent =
+                percentual.toFixed(1) + "%";
+            elementoQuantidade.textContent =
+                quantidade + " aprovado(s)";
+        };
+
+        atualizarCanal(
+            "Telefone",
+            percentualAprovadoTelefone,
+            quantidadeAprovadoTelefone
+        );
+        atualizarCanal(
+            "BOT",
+            percentualAprovadoBot,
+            quantidadeAprovadoBot
+        );
+        atualizarCanal(
+            "E-mail",
+            percentualAprovadoEmail,
+            quantidadeAprovadoEmail
+        );
+
+        renderizarIndicadoresCanaisAprovados(resumo);
+        desenharGraficoCanaisAprovados(resumo);
+    }
+
+    function atualizarGraficos() {
+        const resumo = obterResumoStatus();
+
+        graficoTotalCobrados.textContent = resumo.total;
+        graficoTotalAprovados.textContent = resumo.aprovados;
+        graficoTotalReprovados.textContent = resumo.reprovados;
+        graficoTaxaAprovacao.textContent =
+            resumo.taxaAprovacao.toFixed(1) + "%";
+        graficoValorTotalAprovado.textContent =
+            formatarMoeda(resumo.valorTotalAprovado);
+
+        renderizarIndicadoresStatus(resumo);
+        desenharGraficoStatus(resumo);
+        atualizarComparativoCanaisAprovados(resumo);
+    }
+
+    function formatarDataParaInput(dataISO) {
+        const data = new Date(dataISO);
+
+        if (Number.isNaN(data.getTime())) {
+            return "";
+        }
+
+        const preencher = numero =>
+            String(numero).padStart(2, "0");
+
+        return [
+            data.getFullYear(),
+            preencher(data.getMonth() + 1),
+            preencher(data.getDate())
+        ].join("-") + "T" + [
+            preencher(data.getHours()),
+            preencher(data.getMinutes())
+        ].join(":");
+    }
+
+    function fecharTodosMenusAcoes() {
+        document
+            .querySelectorAll(".opcoes-acoes.aberto")
+            .forEach(menu => menu.classList.remove("aberto"));
+    }
+
+    function abrirModalEdicao(id) {
+        const registro = cobrancas.find(item => item.id === id);
+
+        if (!registro) {
+            return;
+        }
+
+        registroEmEdicaoId = id;
+        editarOrdemServico.value = registro.ordemServico || "";
+        editarNomeCliente.value = registro.nomeCliente || "";
+        editarEmpresa.value = registro.empresa || "";
+        editarCanal.value = registro.canal || "E-mail";
+        editarDataHora.value =
+            formatarDataParaInput(registro.dataHora);
+        editarValorManutencao.value =
+            Number(registro.valorManutencao || 0)
+                .toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+        editarStatus.value =
+            registro.status || "Não respondido";
+
+        modalEdicao.classList.add("aberto");
+        modalEdicao.setAttribute("aria-hidden", "false");
+        fecharTodosMenusAcoes();
+        editarOrdemServico.focus();
+    }
+
+    function fecharModalEdicao() {
+        registroEmEdicaoId = null;
+        formEdicao.reset();
+        modalEdicao.classList.remove("aberto");
+        modalEdicao.setAttribute("aria-hidden", "true");
+    }
+
+    async function salvarEdicaoRegistro(evento) {
+        evento.preventDefault();
+
+        if (!registroEmEdicaoId || !auth.currentUser) {
+            return;
+        }
+
+        const valorConvertido = converterValorParaNumero(
+            editarValorManutencao.value
+        );
+
+        if (
+            !Number.isFinite(valorConvertido) ||
+            valorConvertido < 0
+        ) {
+            alert("Informe um valor válido para a manutenção.");
+            editarValorManutencao.focus();
+            return;
+        }
+
+        const dataConvertida = new Date(editarDataHora.value);
+
+        if (Number.isNaN(dataConvertida.getTime())) {
+            alert("Informe uma data e hora válidas.");
+            editarDataHora.focus();
+            return;
+        }
+
+        botaoSalvarEdicao.disabled = true;
+        botaoSalvarEdicao.textContent = "Salvando...";
+
+        try {
+            await updateDoc(
+                doc(db, "orcamentos", registroEmEdicaoId),
+                {
+                    ordemServico:
+                        editarOrdemServico.value.trim(),
+                    nomeCliente:
+                        editarNomeCliente.value.trim(),
+                    empresa:
+                        editarEmpresa.value.trim(),
+                    canal: editarCanal.value,
+                    dataHora: dataConvertida.toISOString(),
+                    valorManutencao: valorConvertido,
+                    status: editarStatus.value,
+                    atualizadoEm: serverTimestamp(),
+                    atualizadoPor:
+                        auth.currentUser.email || ""
+                }
+            );
+
+            fecharModalEdicao();
+        } catch (erro) {
+            console.error("Erro ao editar:", erro);
+            alert(
+                "Não foi possível salvar as alterações no Firebase."
+            );
+        } finally {
+            botaoSalvarEdicao.disabled = false;
+            botaoSalvarEdicao.textContent = "Salvar alterações";
+        }
+    }
+
+    function detectarDelimitadorCSV(texto) {
+        const primeiraLinha = texto
+            .replace(/^\uFEFF/, "")
+            .split(/\r?\n/)[0] || "";
+
+        let dentroDeAspas = false;
+        let quantidadePontoVirgula = 0;
+        let quantidadeVirgula = 0;
+
+        for (
+            let indice = 0;
+            indice < primeiraLinha.length;
+            indice++
+        ) {
+            const caractere = primeiraLinha[indice];
+
+            if (caractere === '"') {
+                if (
+                    dentroDeAspas &&
+                    primeiraLinha[indice + 1] === '"'
+                ) {
+                    indice++;
+                } else {
+                    dentroDeAspas = !dentroDeAspas;
+                }
+            } else if (!dentroDeAspas) {
+                if (caractere === ";") {
+                    quantidadePontoVirgula++;
+                } else if (caractere === ",") {
+                    quantidadeVirgula++;
+                }
+            }
+        }
+
+        return quantidadePontoVirgula >= quantidadeVirgula
+            ? ";"
+            : ",";
+    }
+
+    function analisarCSV(texto) {
+        const conteudo = texto.replace(/^\uFEFF/, "");
+        const delimitador = detectarDelimitadorCSV(conteudo);
+        const linhas = [];
+
+        let linhaAtual = [];
+        let campoAtual = "";
+        let dentroDeAspas = false;
+
+        for (
+            let indice = 0;
+            indice < conteudo.length;
+            indice++
+        ) {
+            const caractere = conteudo[indice];
+            const proximoCaractere = conteudo[indice + 1];
+
+            if (caractere === '"') {
+                if (
+                    dentroDeAspas &&
+                    proximoCaractere === '"'
+                ) {
+                    campoAtual += '"';
+                    indice++;
+                } else {
+                    dentroDeAspas = !dentroDeAspas;
+                }
+            } else if (
+                caractere === delimitador &&
+                !dentroDeAspas
+            ) {
+                linhaAtual.push(campoAtual.trim());
+                campoAtual = "";
+            } else if (
+                (caractere === "\n" ||
+                    caractere === "\r") &&
+                !dentroDeAspas
+            ) {
+                if (
+                    caractere === "\r" &&
+                    proximoCaractere === "\n"
+                ) {
+                    indice++;
+                }
+
+                linhaAtual.push(campoAtual.trim());
+
+                if (
+                    linhaAtual.some(campo => campo !== "")
+                ) {
+                    linhas.push(linhaAtual);
+                }
+
+                linhaAtual = [];
+                campoAtual = "";
+            } else {
+                campoAtual += caractere;
+            }
+        }
+
+        linhaAtual.push(campoAtual.trim());
+
+        if (linhaAtual.some(campo => campo !== "")) {
+            linhas.push(linhaAtual);
+        }
+
+        return linhas;
+    }
+
+    function normalizarCabecalho(texto) {
+        return String(texto || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .trim()
+            .toLocaleLowerCase("pt-BR");
+    }
+
+    function converterDataCSVParaISO(textoData) {
+        const texto = String(textoData || "").trim();
+
+        const correspondencia = texto.match(
+            /^(\d{1,2})\/(\d{1,2})\/(\d{4}),?\s+(\d{1,2}):(\d{2})(?::(\d{2}))?$/
+        );
+
+        if (correspondencia) {
+            const [
+                ,
+                dia,
+                mes,
+                ano,
+                hora,
+                minuto,
+                segundo = "0"
+            ] = correspondencia;
+
+            const data = new Date(
+                Number(ano),
+                Number(mes) - 1,
+                Number(dia),
+                Number(hora),
+                Number(minuto),
+                Number(segundo)
+            );
+
+            if (!Number.isNaN(data.getTime())) {
+                return data.toISOString();
+            }
+        }
+
+        const dataConvertida = new Date(texto);
+
+        if (!Number.isNaN(dataConvertida.getTime())) {
+            return dataConvertida.toISOString();
+        }
+
+        return new Date().toISOString();
+    }
+
+    function criarChaveRegistro(cobranca) {
+        return [
+            cobranca.ordemServico,
+            cobranca.nomeCliente,
+            cobranca.empresa,
+            cobranca.canal,
+            cobranca.dataHora,
+            Number(
+                cobranca.valorManutencao || 0
+            ).toFixed(2),
+            cobranca.status
+        ]
+            .map(valor =>
+                String(valor || "")
+                    .trim()
+                    .toLocaleLowerCase("pt-BR")
+            )
+            .join("|");
+    }
+
+    function converterLinhasCSVEmCobrancas(linhas) {
+        if (linhas.length < 2) {
+            throw new Error(
+                "O arquivo CSV não possui registros para importar."
+            );
+        }
+
+        const cabecalhos =
+            linhas[0].map(normalizarCabecalho);
+
+        const localizarColuna = (...nomes) =>
+            cabecalhos.findIndex(cabecalho =>
+                nomes.includes(cabecalho)
+            );
+
+        const indiceOS = localizarColuna(
+            "o.s.",
+            "o.s",
+            "os",
+            "ordem de servico"
+        );
+        const indiceCliente = localizarColuna("cliente");
+        const indiceEmpresa = localizarColuna("empresa");
+        const indiceCanal = localizarColuna("canal");
+        const indiceData = localizarColuna(
+            "data e hora",
+            "data e hora da cobranca"
+        );
+        const indiceValor = localizarColuna(
+            "valor da manutencao",
+            "valor"
+        );
+        const indiceSituacao = localizarColuna(
+            "situacao",
+            "status"
+        );
+
+        const indicesObrigatorios = [
+            indiceCliente,
+            indiceEmpresa,
+            indiceCanal,
+            indiceData,
+            indiceValor,
+            indiceSituacao
+        ];
+
+        if (
+            indicesObrigatorios.some(
+                indice => indice === -1
+            )
+        ) {
+            throw new Error(
+                "O CSV não possui todas as colunas esperadas. " +
+                "Utilize um arquivo gerado pelo botão Exportar CSV."
+            );
+        }
+
+        const situacoesValidas = [
+            "Aprovado",
+            "Reprovado",
+            "Não respondido",
+            "Atualização",
+            "Respondido - Em análise"
+        ];
+
+        return linhas
+            .slice(1)
+            .map(linha => {
+                const nomeClienteImportado = String(
+                    linha[indiceCliente] || ""
+                ).trim();
+
+                const nomeEmpresaImportada = String(
+                    linha[indiceEmpresa] || ""
+                ).trim();
+
+                if (
+                    !nomeClienteImportado ||
+                    !nomeEmpresaImportada
+                ) {
+                    return null;
+                }
+
+                const situacaoImportada = String(
+                    linha[indiceSituacao] || ""
+                ).trim();
+
+                const situacao =
+                    situacoesValidas.includes(
+                        situacaoImportada
+                    )
+                        ? situacaoImportada
+                        : "Não respondido";
+
+                const valorConvertido =
+                    converterValorParaNumero(
+                        linha[indiceValor]
+                    );
+
+                return {
+                    ordemServico:
+                        indiceOS >= 0
+                            ? String(
+                                linha[indiceOS] || ""
+                            ).trim()
+                            : "",
+                    nomeCliente:
+                        nomeClienteImportado,
+                    empresa: nomeEmpresaImportada,
+                    canal: String(
+                        linha[indiceCanal] || ""
+                    ).trim(),
+                    dataHora:
+                        converterDataCSVParaISO(
+                            linha[indiceData]
+                        ),
+                    valorManutencao:
+                        Number.isFinite(valorConvertido)
+                            ? valorConvertido
+                            : 0,
+                    status: situacao
+                };
+            })
+            .filter(Boolean);
+    }
+
+    function obterClasseStatus(situacao) {
+        const classes = {
+            "Aprovado": "status-aprovado",
+            "Reprovado": "status-reprovado",
+            "Não respondido": "status-nao-respondido",
+            "Atualização": "status-atualizacao",
+            "Respondido - Em análise":
+                "status-respondido-analise"
+        };
+
+        return classes[situacao] || "";
+    }
+
+    function criarCelula(texto) {
+        const td = document.createElement("td");
+        td.textContent = texto;
+        return td;
+    }
+
+    function atualizarResumo() {
+        const resumo = obterResumoStatus();
+
+        totalRegistros.textContent = resumo.total;
+        totalAprovados.textContent = resumo.aprovados;
+        totalNaoRespondidos.textContent =
+            resumo.naoRespondidos;
+        totalAtualizacoes.textContent =
+            resumo.atualizacoes;
+        valorTotalAprovado.textContent =
+            formatarMoeda(resumo.valorTotalAprovado);
+
+        atualizarGraficos();
+    }
+
+    async function atualizarStatus(id, novoStatus) {
+        if (!auth.currentUser) {
+            return;
+        }
+
+        try {
+            await updateDoc(
+                doc(db, "orcamentos", id),
+                {
+                    status: novoStatus,
+                    atualizadoEm: serverTimestamp(),
+                    atualizadoPor:
+                        auth.currentUser.email || ""
+                }
+            );
+        } catch (erro) {
+            console.error(
+                "Erro ao atualizar situação:",
+                erro
+            );
+            alert(
+                "Não foi possível atualizar a situação no Firebase."
+            );
+            renderizarTabela();
+        }
+    }
+
+    async function excluirCobranca(id) {
+        const registro =
+            cobrancas.find(item => item.id === id);
+
+        if (!registro || !auth.currentUser) {
+            return;
+        }
+
+        const confirmar = confirm(
+            `Deseja excluir a cobrança de ${registro.nomeCliente}, ` +
+            `da empresa ${registro.empresa}?`
+        );
+
+        if (!confirmar) {
+            return;
+        }
+
+        try {
+            await deleteDoc(
+                doc(db, "orcamentos", id)
+            );
+        } catch (erro) {
+            console.error("Erro ao excluir:", erro);
+            alert(
+                "Não foi possível excluir o registro do Firebase."
+            );
+        }
+    }
+
+    function ordenarCobrancas(
+        registros,
+        tipoOrdenacao
+    ) {
+        const registrosOrdenados = [...registros];
+
+        const compararTexto = (valorA, valorB) =>
+            String(valorA || "").localeCompare(
+                String(valorB || ""),
+                "pt-BR",
+                {
+                    numeric: true,
+                    sensitivity: "base"
+                }
+            );
+
+        switch (tipoOrdenacao) {
+            case "cliente-az":
+                registrosOrdenados.sort(
+                    (a, b) =>
+                        compararTexto(
+                            a.nomeCliente,
+                            b.nomeCliente
+                        )
+                );
+                break;
+
+            case "cliente-za":
+                registrosOrdenados.sort(
+                    (a, b) =>
+                        compararTexto(
+                            b.nomeCliente,
+                            a.nomeCliente
+                        )
+                );
+                break;
+
+            case "data-desc":
+                registrosOrdenados.sort(
+                    (a, b) =>
+                        new Date(b.dataHora).getTime() -
+                        new Date(a.dataHora).getTime()
+                );
+                break;
+
+            case "data-asc":
+                registrosOrdenados.sort(
+                    (a, b) =>
+                        new Date(a.dataHora).getTime() -
+                        new Date(b.dataHora).getTime()
+                );
+                break;
+
+            case "os-desc":
+                registrosOrdenados.sort(
+                    (a, b) =>
+                        compararTexto(
+                            b.ordemServico,
+                            a.ordemServico
+                        )
+                );
+                break;
+
+            case "os-asc":
+                registrosOrdenados.sort(
+                    (a, b) =>
+                        compararTexto(
+                            a.ordemServico,
+                            b.ordemServico
+                        )
+                );
+                break;
+
+            default:
+                registrosOrdenados.sort(
+                    (a, b) =>
+                        new Date(b.dataHora).getTime() -
+                        new Date(a.dataHora).getTime()
+                );
+        }
+
+        return registrosOrdenados;
+    }
+
+    function renderizarTabela() {
+        const textoPesquisa = pesquisa.value
+            .trim()
+            .toLocaleLowerCase("pt-BR");
+
+        const statusSelecionado =
+            filtroStatus.value;
+
+        let cobrancasFiltradas =
+            cobrancas.filter(cobranca => {
+                const osCorresponde =
+                    String(
+                        cobranca.ordemServico || ""
+                    )
+                        .toLocaleLowerCase("pt-BR")
+                        .includes(textoPesquisa);
+
+                const clienteCorresponde =
+                    String(
+                        cobranca.nomeCliente || ""
+                    )
+                        .toLocaleLowerCase("pt-BR")
+                        .includes(textoPesquisa);
+
+                const empresaCorresponde =
+                    String(
+                        cobranca.empresa || ""
+                    )
+                        .toLocaleLowerCase("pt-BR")
+                        .includes(textoPesquisa);
+
+                const textoCorresponde =
+                    osCorresponde ||
+                    clienteCorresponde ||
+                    empresaCorresponde;
+
+                const statusCorresponde =
+                    !statusSelecionado ||
+                    cobranca.status ===
+                        statusSelecionado;
+
+                return (
+                    textoCorresponde &&
+                    statusCorresponde
+                );
+            });
+
+        cobrancasFiltradas = ordenarCobrancas(
+            cobrancasFiltradas,
+            ordenacaoTabela.value
+        );
+
+        corpoTabela.innerHTML = "";
+
+        if (cobrancasFiltradas.length === 0) {
+            const linha =
+                document.createElement("tr");
+            const celula =
+                document.createElement("td");
+
+            celula.colSpan = 9;
+            celula.className = "sem-registros";
+            celula.textContent =
+                "Nenhum registro encontrado.";
+
+            linha.appendChild(celula);
+            corpoTabela.appendChild(linha);
+
+            atualizarResumo();
+            return;
+        }
+
+        cobrancasFiltradas.forEach(
+            (cobranca, indice) => {
+                const linha =
+                    document.createElement("tr");
+
+                linha.appendChild(
+                    criarCelula(indice + 1)
+                );
+                linha.appendChild(
+                    criarCelula(
+                        cobranca.ordemServico || "—"
+                    )
+                );
+                linha.appendChild(
+                    criarCelula(cobranca.nomeCliente)
+                );
+                linha.appendChild(
+                    criarCelula(cobranca.empresa)
+                );
+
+                const celulaCanal =
+                    document.createElement("td");
+                const etiquetaCanal =
+                    document.createElement("span");
+
+                etiquetaCanal.className = "canal";
+                etiquetaCanal.textContent =
+                    cobranca.canal;
+
+                celulaCanal.appendChild(
+                    etiquetaCanal
+                );
+                linha.appendChild(celulaCanal);
+
+                linha.appendChild(
+                    criarCelula(
+                        formatarData(
+                            cobranca.dataHora
+                        )
+                    )
+                );
+
+                linha.appendChild(
+                    criarCelula(
+                        formatarMoeda(
+                            cobranca.valorManutencao
+                        )
+                    )
+                );
+
+                const celulaStatus =
+                    document.createElement("td");
+                const seletorStatus =
+                    document.createElement("select");
+
+                seletorStatus.className =
+                    `status-select ${obterClasseStatus(
+                        cobranca.status
+                    )}`;
+
+                const opcoesStatus = [
+                    "Aprovado",
+                    "Reprovado",
+                    "Não respondido",
+                    "Atualização",
+                    "Respondido - Em análise"
+                ];
+
+                opcoesStatus.forEach(opcao => {
+                    const elementoOpcao =
+                        document.createElement(
+                            "option"
+                        );
+
+                    elementoOpcao.value = opcao;
+                    elementoOpcao.textContent = opcao;
+                    elementoOpcao.selected =
+                        opcao === cobranca.status;
+
+                    seletorStatus.appendChild(
+                        elementoOpcao
+                    );
+                });
+
+                seletorStatus.addEventListener(
+                    "change",
+                    async evento => {
+                        seletorStatus.disabled = true;
+
+                        await atualizarStatus(
+                            cobranca.id,
+                            evento.target.value
+                        );
+
+                        seletorStatus.disabled = false;
+                    }
+                );
+
+                celulaStatus.appendChild(
+                    seletorStatus
+                );
+                linha.appendChild(celulaStatus);
+
+                const celulaAcoes =
+                    document.createElement("td");
+                const menuAcoes =
+                    document.createElement("div");
+                const botaoMenu =
+                    document.createElement("button");
+                const opcoesAcoes =
+                    document.createElement("div");
+                const botaoEditar =
+                    document.createElement("button");
+                const botaoExcluirRegistro =
+                    document.createElement("button");
+
+                menuAcoes.className = "menu-acoes";
+
+                botaoMenu.type = "button";
+                botaoMenu.className =
+                    "botao-menu-acoes";
+                botaoMenu.textContent = "⋯";
+                botaoMenu.title = "Mais opções";
+                botaoMenu.setAttribute(
+                    "aria-label",
+                    "Mais opções"
+                );
+
+                opcoesAcoes.className =
+                    "opcoes-acoes";
+
+                botaoEditar.type = "button";
+                botaoEditar.className =
+                    "botao-editar";
+                botaoEditar.textContent = "Editar";
+
+                botaoExcluirRegistro.type =
+                    "button";
+                botaoExcluirRegistro.className =
+                    "botao-excluir-menu";
+                botaoExcluirRegistro.textContent =
+                    "Excluir";
+
+                botaoMenu.addEventListener(
+                    "click",
+                    evento => {
+                        evento.stopPropagation();
+
+                        const deveAbrir =
+                            !opcoesAcoes.classList
+                                .contains("aberto");
+
+                        fecharTodosMenusAcoes();
+
+                        if (deveAbrir) {
+                            opcoesAcoes.classList
+                                .add("aberto");
+                        }
+                    }
+                );
+
+                botaoEditar.addEventListener(
+                    "click",
+                    () => {
+                        abrirModalEdicao(
+                            cobranca.id
+                        );
+                    }
+                );
+
+                botaoExcluirRegistro
+                    .addEventListener(
+                        "click",
+                        async () => {
+                            fecharTodosMenusAcoes();
+                            await excluirCobranca(
+                                cobranca.id
+                            );
+                        }
+                    );
+
+                opcoesAcoes.appendChild(
+                    botaoEditar
+                );
+                opcoesAcoes.appendChild(
+                    botaoExcluirRegistro
+                );
+                menuAcoes.appendChild(botaoMenu);
+                menuAcoes.appendChild(
+                    opcoesAcoes
+                );
+                celulaAcoes.appendChild(
+                    menuAcoes
+                );
+                linha.appendChild(celulaAcoes);
+
+                corpoTabela.appendChild(linha);
+            }
+        );
+
+        atualizarResumo();
+    }
+
+    async function executarLotes(
+        itens,
+        funcaoAdicionarAoLote
+    ) {
+        const tamanhoLote = 400;
+
+        for (
+            let inicio = 0;
+            inicio < itens.length;
+            inicio += tamanhoLote
+        ) {
+            const parte = itens.slice(
+                inicio,
+                inicio + tamanhoLote
+            );
+            const lote = writeBatch(db);
+
+            parte.forEach(item => {
+                funcaoAdicionarAoLote(
+                    lote,
+                    item
+                );
+            });
+
+            await lote.commit();
+        }
+    }
+
+    async function apagarTodosDoFirestore() {
+        const snapshot =
+            await getDocs(colecaoOrcamentos);
+
+        await executarLotes(
+            snapshot.docs,
+            (lote, documentoSnapshot) => {
+                lote.delete(documentoSnapshot.ref);
+            }
+        );
+    }
+
+    async function adicionarRegistrosAoFirestore(
+        registros
+    ) {
+        const email =
+            auth.currentUser?.email || "";
+
+        await executarLotes(
+            registros,
+            (lote, registro) => {
+                const referenciaNova =
+                    doc(colecaoOrcamentos);
+
+                lote.set(referenciaNova, {
+                    ordemServico:
+                        String(
+                            registro.ordemServico ||
+                            ""
+                        ),
+                    nomeCliente:
+                        String(
+                            registro.nomeCliente ||
+                            ""
+                        ),
+                    empresa:
+                        String(
+                            registro.empresa ||
+                            ""
+                        ),
+                    canal:
+                        String(
+                            registro.canal ||
+                            ""
+                        ),
+                    dataHora:
+                        registro.dataHora ||
+                        new Date().toISOString(),
+                    valorManutencao:
+                        Number(
+                            registro.valorManutencao ||
+                            0
+                        ),
+                    status:
+                        registro.status ||
+                        "Não respondido",
+                    criadoEm: serverTimestamp(),
+                    criadoPor: email,
+                    atualizadoEm: serverTimestamp(),
+                    atualizadoPor: email
+                });
+            }
+        );
+    }
+
+    function iniciarSincronizacao() {
+        if (cancelarEscutaFirestore) {
+            cancelarEscutaFirestore();
+        }
+
+        definirStatusSincronizacao(
+            "Conectando ao Firebase..."
+        );
+
+        cancelarEscutaFirestore =
+            onSnapshot(
+                colecaoOrcamentos,
+                snapshot => {
+                    cobrancas =
+                        snapshot.docs.map(
+                            documentoSnapshot => {
+                                const dados =
+                                    documentoSnapshot.data();
+
+                                return {
+                                    id:
+                                        documentoSnapshot.id,
+                                    ordemServico:
+                                        String(
+                                            dados.ordemServico ||
+                                            ""
+                                        ),
+                                    nomeCliente:
+                                        String(
+                                            dados.nomeCliente ||
+                                            ""
+                                        ),
+                                    empresa:
+                                        String(
+                                            dados.empresa ||
+                                            ""
+                                        ),
+                                    canal:
+                                        String(
+                                            dados.canal ||
+                                            ""
+                                        ),
+                                    dataHora:
+                                        dados.dataHora ||
+                                        new Date()
+                                            .toISOString(),
+                                    valorManutencao:
+                                        Number(
+                                            dados.valorManutencao ||
+                                            0
+                                        ),
+                                    status:
+                                        dados.status ||
+                                        "Não respondido"
+                                };
+                            }
+                        );
+
+                    renderizarTabela();
+
+                    definirStatusSincronizacao(
+                        "Sincronizado em tempo real",
+                        "online"
+                    );
+                },
+                erro => {
+                    console.error(
+                        "Erro de sincronização:",
+                        erro
+                    );
+
+                    definirStatusSincronizacao(
+                        "Erro ao sincronizar com o Firebase",
+                        "erro"
+                    );
+
+                    if (
+                        erro.code ===
+                        "permission-denied"
+                    ) {
+                        alert(
+                            "O Firebase negou o acesso. " +
+                            "Verifique se o usuário está autenticado " +
+                            "e se as regras do Firestore foram publicadas."
+                        );
+                    }
+                }
+            );
+    }
+
+    formLogin.addEventListener(
+        "submit",
+        async evento => {
+            evento.preventDefault();
+
+            loginMensagem.textContent = "";
+            botaoEntrar.disabled = true;
+            botaoEntrar.textContent =
+                "Entrando...";
+
+            try {
+                await signInWithEmailAndPassword(
+                    auth,
+                    loginEmail.value.trim(),
+                    loginSenha.value
+                );
+
+                loginSenha.value = "";
+            } catch (erro) {
+                console.error(
+                    "Erro de autenticação:",
+                    erro
+                );
+
+                loginMensagem.textContent =
+                    traduzirErroLogin(erro);
+            } finally {
+                botaoEntrar.disabled = false;
+                botaoEntrar.textContent = "Entrar";
+            }
+        }
+    );
+
+    botaoSair.addEventListener(
+        "click",
+        async () => {
+            try {
+                await signOut(auth);
+            } catch (erro) {
+                console.error(
+                    "Erro ao sair:",
+                    erro
+                );
+                alert(
+                    "Não foi possível encerrar a sessão."
+                );
+            }
+        }
+    );
+
+    onAuthStateChanged(
+        auth,
+        usuario => {
+            if (cancelarEscutaFirestore) {
+                cancelarEscutaFirestore();
+                cancelarEscutaFirestore = null;
+            }
+
+            if (usuario) {
+                emailUsuarioLogado.textContent =
+                    usuario.email || "Usuário";
+
+                telaLogin.classList.add("oculta");
+                document.body.classList.remove(
+                    "aplicacao-bloqueada"
+                );
+
+                iniciarSincronizacao();
+            } else {
+                cobrancas = [];
+                emailUsuarioLogado.textContent = "—";
+
+                document.body.classList.add(
+                    "aplicacao-bloqueada"
+                );
+                telaLogin.classList.remove("oculta");
+
+                definirStatusSincronizacao(
+                    "Sessão encerrada"
+                );
+
+                fecharModalEdicao();
+                loginEmail.focus();
+            }
+        }
+    );
+
+    botaoAbaAcompanhamento.addEventListener(
+        "click",
+        () => {
+            alternarAba("acompanhamento");
+        }
+    );
+
+    botaoAbaGraficos.addEventListener(
+        "click",
+        () => {
+            alternarAba("graficos");
+        }
+    );
+
+    window.addEventListener(
+        "resize",
+        () => {
+            if (
+                abaGraficos.classList.contains(
+                    "ativo"
+                )
+            ) {
+                atualizarGraficos();
+            }
+        }
+    );
+
+    formEdicao.addEventListener(
+        "submit",
+        salvarEdicaoRegistro
+    );
+
+    botaoFecharModal.addEventListener(
+        "click",
+        fecharModalEdicao
+    );
+
+    botaoCancelarEdicao.addEventListener(
+        "click",
+        fecharModalEdicao
+    );
+
+    modalEdicao.addEventListener(
+        "click",
+        evento => {
+            if (evento.target === modalEdicao) {
+                fecharModalEdicao();
+            }
+        }
+    );
+
+    document.addEventListener(
+        "click",
+        fecharTodosMenusAcoes
+    );
+
+    document.addEventListener(
+        "keydown",
+        evento => {
+            if (evento.key === "Escape") {
+                fecharTodosMenusAcoes();
+
+                if (
+                    modalEdicao.classList.contains(
+                        "aberto"
+                    )
+                ) {
+                    fecharModalEdicao();
+                }
+            }
+        }
+    );
+
+    editarValorManutencao.addEventListener(
+        "blur",
+        () => {
+            const valorConvertido =
+                converterValorParaNumero(
+                    editarValorManutencao.value
+                );
+
+            if (
+                Number.isFinite(valorConvertido) &&
+                editarValorManutencao.value.trim()
+            ) {
+                editarValorManutencao.value =
+                    valorConvertido.toLocaleString(
+                        "pt-BR",
+                        {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }
+                    );
+            }
+        }
+    );
+
+    formCobranca.addEventListener(
+        "submit",
+        async evento => {
+            evento.preventDefault();
+
+            if (!auth.currentUser) {
+                alert(
+                    "Sua sessão expirou. Entre novamente."
+                );
+                return;
+            }
+
+            const valorConvertido =
+                converterValorParaNumero(
+                    valorManutencao.value
+                );
+
+            if (
+                !Number.isFinite(valorConvertido) ||
+                valorConvertido < 0
+            ) {
+                alert(
+                    "Informe um valor válido para a manutenção."
+                );
+                valorManutencao.focus();
+                return;
+            }
+
+            botaoRegistrar.disabled = true;
+            botaoRegistrar.textContent =
+                "Registrando...";
+
+            try {
+                await addDoc(
+                    colecaoOrcamentos,
+                    {
+                        ordemServico:
+                            ordemServico.value.trim(),
+                        nomeCliente:
+                            nomeCliente.value.trim(),
+                        empresa:
+                            empresa.value.trim(),
+                        canal: canal.value,
+                        dataHora:
+                            new Date().toISOString(),
+                        valorManutencao:
+                            valorConvertido,
+                        status: status.value,
+                        criadoEm:
+                            serverTimestamp(),
+                        criadoPor:
+                            auth.currentUser.email ||
+                            "",
+                        atualizadoEm:
+                            serverTimestamp(),
+                        atualizadoPor:
+                            auth.currentUser.email ||
+                            ""
+                    }
+                );
+
+                formCobranca.reset();
+                status.value = "Não respondido";
+                ordemServico.focus();
+            } catch (erro) {
+                console.error(
+                    "Erro ao registrar cobrança:",
+                    erro
+                );
+
+                alert(
+                    "Não foi possível salvar a cobrança no Firebase."
+                );
+            } finally {
+                botaoRegistrar.disabled = false;
+                botaoRegistrar.textContent =
+                    "Registrar cobrança";
+            }
+        }
+    );
+
+    valorManutencao.addEventListener(
+        "blur",
+        () => {
+            const valorConvertido =
+                converterValorParaNumero(
+                    valorManutencao.value
+                );
+
+            if (
+                Number.isFinite(valorConvertido) &&
+                valorManutencao.value.trim()
+            ) {
+                valorManutencao.value =
+                    valorConvertido.toLocaleString(
+                        "pt-BR",
+                        {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }
+                    );
+            }
+        }
+    );
+
+    pesquisa.addEventListener(
+        "input",
+        renderizarTabela
+    );
+    filtroStatus.addEventListener(
+        "change",
+        renderizarTabela
+    );
+    ordenacaoTabela.addEventListener(
+        "change",
+        renderizarTabela
+    );
+
+    botaoLimpar.addEventListener(
+        "click",
+        async () => {
+            if (cobrancas.length === 0) {
+                alert(
+                    "Não existem registros para apagar."
+                );
+                return;
+            }
+
+            const confirmar = confirm(
+                "ATENÇÃO: isso apagará todos os registros do Firebase " +
+                "para todos os usuários.\n\nDeseja continuar?"
+            );
+
+            if (!confirmar) {
+                return;
+            }
+
+            const confirmarNovamente = confirm(
+                "Confirme novamente: deseja apagar TODOS os orçamentos compartilhados?"
+            );
+
+            if (!confirmarNovamente) {
+                return;
+            }
+
+            botaoLimpar.disabled = true;
+
+            try {
+                await apagarTodosDoFirestore();
+            } catch (erro) {
+                console.error(
+                    "Erro ao apagar registros:",
+                    erro
+                );
+                alert(
+                    "Não foi possível apagar todos os registros."
+                );
+            } finally {
+                botaoLimpar.disabled = false;
+            }
+        }
+    );
+
+    botaoImportar.addEventListener(
+        "click",
+        () => {
+            arquivoImportacao.click();
+        }
+    );
+
+    arquivoImportacao.addEventListener(
+        "change",
+        async evento => {
+            const arquivo =
+                evento.target.files[0];
+
+            if (!arquivo) {
+                return;
+            }
+
+            if (!auth.currentUser) {
+                arquivoImportacao.value = "";
+                return;
+            }
+
+            botaoImportar.disabled = true;
+
+            try {
+                const textoCSV =
+                    await arquivo.text();
+                const linhas =
+                    analisarCSV(textoCSV);
+                const registrosImportados =
+                    converterLinhasCSVEmCobrancas(
+                        linhas
+                    );
+
+                if (
+                    registrosImportados.length === 0
+                ) {
+                    throw new Error(
+                        "Nenhum registro válido foi encontrado no arquivo."
+                    );
+                }
+
+                let modoImportacao = "substituir";
+
+                if (cobrancas.length > 0) {
+                    const substituir = confirm(
+                        "Como deseja importar o backup?\n\n" +
+                        "OK = SUBSTITUIR todos os registros compartilhados atuais.\n" +
+                        "Cancelar = escolher a opção de MESCLAR."
+                    );
+
+                    if (!substituir) {
+                        const mesclar = confirm(
+                            "Deseja MESCLAR o backup com os registros atuais?\n\n" +
+                            "Registros idênticos não serão duplicados.\n" +
+                            "Cancelar = interromper a importação."
+                        );
+
+                        if (!mesclar) {
+                            return;
+                        }
+
+                        modoImportacao =
+                            "mesclar";
+                    }
+                }
+
+                let registrosParaAdicionar =
+                    registrosImportados;
+                let quantidadeIgnorada = 0;
+
+                if (
+                    modoImportacao ===
+                    "substituir"
+                ) {
+                    await apagarTodosDoFirestore();
+                } else {
+                    const chavesExistentes =
+                        new Set(
+                            cobrancas.map(
+                                criarChaveRegistro
+                            )
+                        );
+
+                    registrosParaAdicionar =
+                        registrosImportados.filter(
+                            registro => {
+                                const chave =
+                                    criarChaveRegistro(
+                                        registro
+                                    );
+
+                                if (
+                                    chavesExistentes.has(
+                                        chave
+                                    )
+                                ) {
+                                    quantidadeIgnorada++;
+                                    return false;
+                                }
+
+                                chavesExistentes.add(
+                                    chave
+                                );
+                                return true;
+                            }
+                        );
+                }
+
+                await adicionarRegistrosAoFirestore(
+                    registrosParaAdicionar
+                );
+
+                let mensagem =
+                    `${registrosParaAdicionar.length} registro(s) ` +
+                    "importado(s) para o Firebase com sucesso.";
+
+                if (quantidadeIgnorada > 0) {
+                    mensagem +=
+                        `\n${quantidadeIgnorada} registro(s) idêntico(s) foram ignorados.`;
+                }
+
+                alert(mensagem);
+            } catch (erro) {
+                console.error(
+                    "Erro ao importar CSV:",
+                    erro
+                );
+                alert(
+                    erro.message ||
+                    "Não foi possível importar o arquivo CSV."
+                );
+            } finally {
+                arquivoImportacao.value = "";
+                botaoImportar.disabled = false;
+            }
+        }
+    );
+
+    botaoExportar.addEventListener(
+        "click",
+        () => {
+            if (cobrancas.length === 0) {
+                alert(
+                    "Não existem registros para exportar."
+                );
+                return;
+            }
+
+            const cabecalho = [
+                "Número",
+                "O.S.",
+                "Cliente",
+                "Empresa",
+                "Canal",
+                "Data e hora",
+                "Valor da manutenção",
+                "Situação"
+            ];
+
+            const linhas = cobrancas.map(
+                (cobranca, indice) => [
+                    indice + 1,
+                    cobranca.ordemServico || "",
+                    cobranca.nomeCliente,
+                    cobranca.empresa,
+                    cobranca.canal,
+                    formatarData(
+                        cobranca.dataHora
+                    ),
+                    formatarMoeda(
+                        cobranca.valorManutencao
+                    ),
+                    cobranca.status
+                ]
+            );
+
+            const conteudoCSV =
+                [cabecalho, ...linhas]
+                    .map(linha =>
+                        linha
+                            .map(valor => {
+                                const texto =
+                                    String(valor)
+                                        .replace(
+                                            /"/g,
+                                            '""'
+                                        );
+
+                                return `"${texto}"`;
+                            })
+                            .join(";")
+                    )
+                    .join("\n");
+
+            const arquivo = new Blob(
+                ["\uFEFF" + conteudoCSV],
+                {
+                    type:
+                        "text/csv;charset=utf-8;"
+                }
+            );
+
+            const enderecoArquivo =
+                URL.createObjectURL(arquivo);
+            const link =
+                document.createElement("a");
+
+            const dataAtual =
+                new Date()
+                    .toLocaleDateString(
+                        "pt-BR"
+                    )
+                    .replace(/\//g, "-");
+
+            link.href = enderecoArquivo;
+            link.download =
+                `acompanhamento_orcamentos_limerpak_${dataAtual}.csv`;
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            URL.revokeObjectURL(
+                enderecoArquivo
+            );
+        }
+    );
+
+    renderizarTabela();
+</script>
+
+</body>
+</html>
