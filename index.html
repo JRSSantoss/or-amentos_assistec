@@ -1129,6 +1129,95 @@
             }
         }
 
+
+        .resumo-gerencial {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .cartao-gerencial {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cartao-gerencial strong {
+            display: block;
+            margin-bottom: 7px;
+        }
+
+        .cartao-gerencial small {
+            display: block;
+            color: #78909c;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .cartao-gerencial.alerta {
+            border-left-color: #ef6c00;
+        }
+
+        .cartao-gerencial.financeiro {
+            border-left-color: #2e7d32;
+        }
+
+        .cartao-gerencial.tempo {
+            border-left-color: #5e35b1;
+        }
+
+        .cartao-gerencial.aberto {
+            border-left-color: #0277bd;
+        }
+
+        .tabela-dashboard-gerencial table {
+            min-width: 860px;
+        }
+
+        .taxa-atendente {
+            min-width: 160px;
+        }
+
+        .taxa-atendente-topo {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        .barra-atendente {
+            height: 9px;
+            overflow: hidden;
+            border-radius: 999px;
+            background-color: #e4ebef;
+        }
+
+        .barra-atendente-preenchimento {
+            height: 100%;
+            border-radius: 999px;
+            background-color: var(--cor-principal);
+        }
+
+        .nota-gerencial {
+            margin-top: 12px;
+            color: #607d8b;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 1000px) {
+            .resumo-gerencial {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 650px) {
+            .resumo-gerencial {
+                grid-template-columns: 1fr;
+            }
+        }
+
     </style>
 </head>
 
@@ -1602,6 +1691,70 @@
         </section>
 
         <section class="painel">
+            <h2>Indicadores gerenciais</h2>
+
+            <div class="resumo-gerencial">
+                <div class="cartao cartao-gerencial tempo">
+                    <span>Tempo médio até aprovação</span>
+                    <strong id="gerencialTempoMedioAprovacao">—</strong>
+                    <small id="gerencialTempoMedioAprovacaoInfo">
+                        Aguardando histórico de aprovações.
+                    </small>
+                </div>
+
+                <div class="cartao cartao-gerencial alerta">
+                    <span>Sem resposta há 7+ dias</span>
+                    <strong id="gerencialSeteDias">0</strong>
+                    <small id="gerencialSeteDiasInfo">
+                        0 em devolução • 0 premium
+                    </small>
+                </div>
+
+                <div class="cartao cartao-gerencial financeiro">
+                    <span>Valor aguardando decisão</span>
+                    <strong id="gerencialValorEmAberto">R$ 0,00</strong>
+                    <small>
+                        Não respondido, Em análise e Atualização.
+                    </small>
+                </div>
+
+                <div class="cartao cartao-gerencial aberto">
+                    <span>Cobranças em aberto</span>
+                    <strong id="gerencialEmAberto">0</strong>
+                    <small id="gerencialEmAbertoInfo">
+                        Registros ainda sem decisão final.
+                    </small>
+                </div>
+            </div>
+        </section>
+
+        <section class="painel">
+            <h2>Desempenho por atendente</h2>
+
+            <div class="tabela-container tabela-dashboard-gerencial">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Atendente</th>
+                            <th>Total</th>
+                            <th>Aprovados</th>
+                            <th>Reprovados</th>
+                            <th>Em aberto</th>
+                            <th>Taxa de aprovação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoDesempenhoAtendentes"></tbody>
+                </table>
+            </div>
+
+            <div class="nota-gerencial">
+                A taxa por atendente considera somente decisões concluídas:
+                Aprovados ÷ (Aprovados + Reprovados). Registros ainda em
+                aberto não reduzem a taxa de aprovação.
+            </div>
+        </section>
+
+        <section class="painel">
             <h2>Relação gráfica dos orçamentos</h2>
 
             <div class="painel-graficos">
@@ -2014,6 +2167,23 @@
         document.getElementById("graficoTaxaAprovacao");
     const graficoValorTotalAprovado =
         document.getElementById("graficoValorTotalAprovado");
+
+    const gerencialTempoMedioAprovacao =
+        document.getElementById("gerencialTempoMedioAprovacao");
+    const gerencialTempoMedioAprovacaoInfo =
+        document.getElementById("gerencialTempoMedioAprovacaoInfo");
+    const gerencialSeteDias =
+        document.getElementById("gerencialSeteDias");
+    const gerencialSeteDiasInfo =
+        document.getElementById("gerencialSeteDiasInfo");
+    const gerencialValorEmAberto =
+        document.getElementById("gerencialValorEmAberto");
+    const gerencialEmAberto =
+        document.getElementById("gerencialEmAberto");
+    const gerencialEmAbertoInfo =
+        document.getElementById("gerencialEmAbertoInfo");
+    const corpoDesempenhoAtendentes =
+        document.getElementById("corpoDesempenhoAtendentes");
     const graficoStatusCanvas =
         document.getElementById("graficoStatusCanvas");
     const listaIndicadoresStatus =
@@ -2704,6 +2874,12 @@
         const resumo = {
             total: registros.length,
             valorTotalAprovado: 0,
+            valorEmAberto: 0,
+            emAberto: 0,
+            acimaSeteDias: 0,
+            acimaSeteDiasPremium: 0,
+            acimaSeteDiasDevolucao: 0,
+            temposAprovacaoMs: [],
             porStatus: {},
             aprovadosPorCanal: {
                 "Telefone": 0,
@@ -2733,6 +2909,52 @@
                 ) {
                     resumo.aprovadosPorCanal[cobranca.canal] += 1;
                 }
+
+                if (cobranca.aprovadoEm) {
+                    const dataRegistro =
+                        new Date(cobranca.dataHora).getTime();
+                    const dataAprovacao =
+                        new Date(cobranca.aprovadoEm).getTime();
+
+                    if (
+                        !Number.isNaN(dataRegistro) &&
+                        !Number.isNaN(dataAprovacao) &&
+                        dataAprovacao >= dataRegistro
+                    ) {
+                        resumo.temposAprovacaoMs.push(
+                            dataAprovacao - dataRegistro
+                        );
+                    }
+                }
+            }
+
+            const statusEmAberto = [
+                "Não respondido",
+                "Respondido - Em análise",
+                "Atualização"
+            ].includes(cobranca.status);
+
+            if (
+                !cobranca.finalizado &&
+                statusEmAberto
+            ) {
+                resumo.emAberto += 1;
+                resumo.valorEmAberto += Number(
+                    cobranca.valorManutencao || 0
+                );
+            }
+
+            if (
+                !cobranca.finalizado &&
+                atingiuPrazoDeSeteDias(cobranca)
+            ) {
+                resumo.acimaSeteDias += 1;
+
+                if (cobranca.premium) {
+                    resumo.acimaSeteDiasPremium += 1;
+                } else {
+                    resumo.acimaSeteDiasDevolucao += 1;
+                }
             }
         });
 
@@ -2748,7 +2970,281 @@
             ? (resumo.aprovados / resumo.total) * 100
             : 0;
 
+        resumo.quantidadeAprovacoesComTempo =
+            resumo.temposAprovacaoMs.length;
+
+        resumo.tempoMedioAprovacaoMs =
+            resumo.quantidadeAprovacoesComTempo > 0
+                ? resumo.temposAprovacaoMs.reduce(
+                    (soma, valor) => soma + valor,
+                    0
+                ) / resumo.quantidadeAprovacoesComTempo
+                : null;
+
         return resumo;
+    }
+
+
+    function formatarDuracaoGerencial(milisegundos) {
+        if (
+            milisegundos == null ||
+            !Number.isFinite(milisegundos)
+        ) {
+            return "—";
+        }
+
+        const horas =
+            milisegundos / (60 * 60 * 1000);
+
+        if (horas < 1) {
+            const minutos = Math.max(
+                1,
+                Math.round(horas * 60)
+            );
+
+            return `${minutos} min`;
+        }
+
+        if (horas < 24) {
+            return `${horas.toFixed(1)} h`;
+        }
+
+        const dias = horas / 24;
+
+        return `${dias.toFixed(1)} dias`;
+    }
+
+    function registroEstaEmAberto(cobranca) {
+        return (
+            !cobranca.finalizado &&
+            [
+                "Não respondido",
+                "Respondido - Em análise",
+                "Atualização"
+            ].includes(cobranca.status)
+        );
+    }
+
+    function renderizarIndicadoresGerenciais(
+        resumo
+    ) {
+        gerencialTempoMedioAprovacao.textContent =
+            formatarDuracaoGerencial(
+                resumo.tempoMedioAprovacaoMs
+            );
+
+        if (
+            resumo.quantidadeAprovacoesComTempo > 0
+        ) {
+            gerencialTempoMedioAprovacaoInfo.textContent =
+                `${resumo.quantidadeAprovacoesComTempo} aprovação(ões) com horário registrado.`;
+        } else {
+            gerencialTempoMedioAprovacaoInfo.textContent =
+                "O cálculo começará nas próximas aprovações registradas pelo sistema.";
+        }
+
+        gerencialSeteDias.textContent =
+            String(resumo.acimaSeteDias);
+
+        gerencialSeteDiasInfo.textContent =
+            `${resumo.acimaSeteDiasDevolucao} em devolução • ` +
+            `${resumo.acimaSeteDiasPremium} premium`;
+
+        gerencialValorEmAberto.textContent =
+            formatarMoeda(resumo.valorEmAberto);
+
+        gerencialEmAberto.textContent =
+            String(resumo.emAberto);
+
+        const percentualAberto =
+            resumo.total > 0
+                ? (
+                    resumo.emAberto /
+                    resumo.total *
+                    100
+                )
+                : 0;
+
+        gerencialEmAbertoInfo.textContent =
+            `${percentualAberto.toFixed(1)}% dos registros do período analisado.`;
+    }
+
+    function obterDesempenhoAtendentes(
+        registros
+    ) {
+        const mapa = new Map();
+
+        registros.forEach(cobranca => {
+            const atendente =
+                String(
+                    cobranca.criadoPor ||
+                    "Não identificado"
+                ).trim() ||
+                "Não identificado";
+
+            if (!mapa.has(atendente)) {
+                mapa.set(
+                    atendente,
+                    {
+                        atendente,
+                        total: 0,
+                        aprovados: 0,
+                        reprovados: 0,
+                        emAberto: 0
+                    }
+                );
+            }
+
+            const item = mapa.get(atendente);
+
+            item.total += 1;
+
+            if (
+                cobranca.status === "Aprovado"
+            ) {
+                item.aprovados += 1;
+            } else if (
+                cobranca.status === "Reprovado"
+            ) {
+                item.reprovados += 1;
+            }
+
+            if (
+                registroEstaEmAberto(cobranca)
+            ) {
+                item.emAberto += 1;
+            }
+        });
+
+        return Array.from(mapa.values())
+            .map(item => {
+                const decisoes =
+                    item.aprovados +
+                    item.reprovados;
+
+                return {
+                    ...item,
+                    decisoes,
+                    taxaAprovacao:
+                        decisoes > 0
+                            ? (
+                                item.aprovados /
+                                decisoes *
+                                100
+                            )
+                            : null
+                };
+            })
+            .sort(
+                (a, b) =>
+                    b.total - a.total ||
+                    b.aprovados - a.aprovados ||
+                    a.atendente.localeCompare(
+                        b.atendente,
+                        "pt-BR"
+                    )
+            );
+    }
+
+    function renderizarDesempenhoAtendentes(
+        registros
+    ) {
+        corpoDesempenhoAtendentes.innerHTML =
+            "";
+
+        const desempenho =
+            obterDesempenhoAtendentes(
+                registros
+            );
+
+        if (desempenho.length === 0) {
+            const linha =
+                document.createElement("tr");
+            const celula =
+                document.createElement("td");
+
+            celula.colSpan = 6;
+            celula.className = "sem-registros";
+            celula.textContent =
+                "Não há registros no período selecionado.";
+
+            linha.appendChild(celula);
+            corpoDesempenhoAtendentes.appendChild(
+                linha
+            );
+            return;
+        }
+
+        desempenho.forEach(item => {
+            const linha =
+                document.createElement("tr");
+
+            linha.appendChild(
+                criarCelula(item.atendente)
+            );
+            linha.appendChild(
+                criarCelula(item.total)
+            );
+            linha.appendChild(
+                criarCelula(item.aprovados)
+            );
+            linha.appendChild(
+                criarCelula(item.reprovados)
+            );
+            linha.appendChild(
+                criarCelula(item.emAberto)
+            );
+
+            const celulaTaxa =
+                document.createElement("td");
+            const bloco =
+                document.createElement("div");
+            const topo =
+                document.createElement("div");
+            const texto =
+                document.createElement("span");
+            const decisoes =
+                document.createElement("span");
+            const barra =
+                document.createElement("div");
+            const preenchimento =
+                document.createElement("div");
+
+            bloco.className =
+                "taxa-atendente";
+            topo.className =
+                "taxa-atendente-topo";
+            barra.className =
+                "barra-atendente";
+            preenchimento.className =
+                "barra-atendente-preenchimento";
+
+            const taxa =
+                item.taxaAprovacao;
+
+            texto.textContent =
+                taxa == null
+                    ? "—"
+                    : `${taxa.toFixed(1)}%`;
+
+            decisoes.textContent =
+                `${item.decisoes} decisão(ões)`;
+
+            preenchimento.style.width =
+                `${taxa == null ? 0 : taxa}%`;
+
+            topo.appendChild(texto);
+            topo.appendChild(decisoes);
+            barra.appendChild(preenchimento);
+            bloco.appendChild(topo);
+            bloco.appendChild(barra);
+            celulaTaxa.appendChild(bloco);
+            linha.appendChild(celulaTaxa);
+
+            corpoDesempenhoAtendentes.appendChild(
+                linha
+            );
+        });
     }
 
     function obterLinhasLegendaStatus(texto) {
@@ -3099,6 +3595,13 @@
         graficoValorTotalAprovado.textContent =
             formatarMoeda(resumo.valorTotalAprovado);
 
+        renderizarIndicadoresGerenciais(
+            resumo
+        );
+        renderizarDesempenhoAtendentes(
+            registrosDashboard
+        );
+
         renderizarIndicadoresStatus(resumo);
         desenharGraficoStatus(resumo);
         atualizarComparativoCanaisAprovados(resumo);
@@ -3220,25 +3723,41 @@
         botaoSalvarEdicao.textContent = "Salvando...";
 
         try {
+            const dadosAtualizacao = {
+                ordemServico:
+                    editarOrdemServico.value.trim(),
+                notaFiscal:
+                    editarNotaFiscal.value.trim(),
+                nomeCliente:
+                    editarNomeCliente.value.trim(),
+                empresa:
+                    editarEmpresa.value.trim(),
+                canal: editarCanal.value,
+                dataHora: dataConvertida.toISOString(),
+                valorManutencao: valorConvertido,
+                status: editarStatus.value,
+                atualizadoEm: serverTimestamp(),
+                atualizadoPor:
+                    auth.currentUser.email || ""
+            };
+
+            if (
+                editarStatus.value === "Aprovado" &&
+                registroAtual.status !== "Aprovado"
+            ) {
+                dadosAtualizacao.aprovadoEm =
+                    serverTimestamp();
+            } else if (
+                editarStatus.value !== "Aprovado" &&
+                registroAtual.status === "Aprovado"
+            ) {
+                dadosAtualizacao.aprovadoEm =
+                    null;
+            }
+
             await updateDoc(
                 doc(db, "orcamentos", registroEmEdicaoId),
-                {
-                    ordemServico:
-                        editarOrdemServico.value.trim(),
-                    notaFiscal:
-                        editarNotaFiscal.value.trim(),
-                    nomeCliente:
-                        editarNomeCliente.value.trim(),
-                    empresa:
-                        editarEmpresa.value.trim(),
-                    canal: editarCanal.value,
-                    dataHora: dataConvertida.toISOString(),
-                    valorManutencao: valorConvertido,
-                    status: editarStatus.value,
-                    atualizadoEm: serverTimestamp(),
-                    atualizadoPor:
-                        auth.currentUser.email || ""
-                }
+                dadosAtualizacao
             );
 
             fecharModalEdicao();
@@ -3649,14 +4168,30 @@
         }
 
         try {
+            const dadosAtualizacao = {
+                status: novoStatus,
+                atualizadoEm: serverTimestamp(),
+                atualizadoPor:
+                    auth.currentUser.email || ""
+            };
+
+            if (
+                novoStatus === "Aprovado" &&
+                registro?.status !== "Aprovado"
+            ) {
+                dadosAtualizacao.aprovadoEm =
+                    serverTimestamp();
+            } else if (
+                novoStatus !== "Aprovado" &&
+                registro?.status === "Aprovado"
+            ) {
+                dadosAtualizacao.aprovadoEm =
+                    null;
+            }
+
             await updateDoc(
                 doc(db, "orcamentos", id),
-                {
-                    status: novoStatus,
-                    atualizadoEm: serverTimestamp(),
-                    atualizadoPor:
-                        auth.currentUser.email || ""
-                }
+                dadosAtualizacao
             );
         } catch (erro) {
             console.error(
@@ -3797,6 +4332,7 @@
                 dataHora: registro.dataHora || new Date().toISOString(),
                 valorManutencao: Number(registro.valorManutencao || 0),
                 status: registro.status || "Não respondido",
+                aprovadoEm: registro.aprovadoEm || null,
                 premium: Boolean(registro.premium),
                 finalizado: Boolean(registro.finalizado),
                 finalizadoPor: registro.finalizadoPor || "",
@@ -4634,6 +5170,8 @@
                     Number(item.valorManutencao || 0),
                 status:
                     item.status || "Não respondido",
+                aprovadoEm:
+                    item.aprovadoEm || null,
                 premium:
                     Boolean(item.premium),
                 finalizado:
@@ -4743,6 +5281,13 @@
                             status:
                                 dados.status ||
                                 "Não respondido",
+                            aprovadoEm:
+                                valorFirestoreParaISO(
+                                    dados.aprovadoEm
+                                ) ||
+                                String(
+                                    dados.aprovadoEm || ""
+                                ),
                             premium:
                                 Boolean(
                                     dados.premium
@@ -4870,6 +5415,10 @@
                                     status:
                                         dados.status ||
                                         "Não respondido",
+                                    aprovadoEm:
+                                        valorFirestoreParaISO(
+                                            dados.aprovadoEm
+                                        ),
                                     premium:
                                         Boolean(
                                             dados.premium
@@ -5285,6 +5834,10 @@
                         valorManutencao:
                             valorConvertido,
                         status: status.value,
+                        aprovadoEm:
+                            status.value === "Aprovado"
+                                ? serverTimestamp()
+                                : null,
                         premium: false,
                         finalizado: false,
                         criadoEm:
