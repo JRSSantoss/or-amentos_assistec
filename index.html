@@ -1,12 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Acompanhamento de Orçamentos | Limerpak</title>
-
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Acompanhamento de Orçamentos | Limerpak</title>
+<style>
         :root {
             --cor-principal: #185a7d;
             --cor-principal-escura: #10445f;
@@ -1218,831 +1217,884 @@
             }
         }
 
-    </style>
+    
+
+        /* ===== Painel inicial corporativo e compacto ===== */
+        header {
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+        }
+
+        header .cabecalho-conteudo {
+            max-width: 1400px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .marca-sistema {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            min-width: 0;
+        }
+
+        .marca-textos {
+            min-width: 0;
+        }
+
+        .marca-textos strong {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 15px;
+            letter-spacing: 0.01em;
+        }
+
+        .marca-textos span {
+            display: block;
+            font-size: 12px;
+            opacity: 0.78;
+            white-space: nowrap;
+        }
+
+        .logo-cabecalho {
+            margin: 0;
+            flex: 0 0 auto;
+        }
+
+        .logo-cabecalho img {
+            width: 205px;
+        }
+
+        .usuario-logado {
+            margin-top: 0;
+            margin-left: auto;
+            padding: 5px 5px 5px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.08);
+            gap: 9px;
+        }
+
+        .usuario-logado span {
+            max-width: 260px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 12px;
+        }
+
+        .botao-sair {
+            height: 32px;
+            padding: 0 12px;
+            border-radius: 7px;
+        }
+
+        main {
+            margin-top: 18px;
+        }
+
+        .abas-navegacao {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            gap: 4px;
+            margin-bottom: 18px;
+            padding: 5px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 2px 8px rgba(38, 50, 56, 0.07);
+            backdrop-filter: blur(8px);
+        }
+
+        .botao-aba {
+            height: 36px;
+            padding: 0 16px;
+            border-radius: 7px;
+            background-color: transparent;
+            color: #546e7a;
+        }
+
+        .botao-aba:hover {
+            transform: none;
+            background-color: #eef3f6;
+        }
+
+        .botao-aba.ativo {
+            background-color: var(--cor-principal);
+            color: var(--cor-branca);
+            box-shadow: 0 2px 5px rgba(24, 90, 125, 0.20);
+        }
+
+        .painel {
+            border: 1px solid #e4eaee;
+            border-radius: 11px;
+            padding: 19px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 8px rgba(38, 50, 56, 0.055);
+        }
+
+        .painel-cabecalho {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .painel-cabecalho h2 {
+            margin: 0 0 4px;
+            font-size: 18px;
+        }
+
+        .painel-cabecalho p {
+            margin: 0;
+            color: #78909c;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .painel-cadastro {
+            border-top: 3px solid var(--cor-principal);
+        }
+
+        .formulario {
+            grid-template-columns:
+                0.72fr
+                0.72fr
+                1.25fr
+                1.25fr;
+            gap: 12px 14px;
+        }
+
+        .formulario .campo {
+            gap: 5px;
+        }
+
+        .formulario label,
+        .filtros label {
+            color: #546e7a;
+            font-size: 12px;
+        }
+
+        .formulario input,
+        .formulario select,
+        .filtros input,
+        .filtros select {
+            height: 39px;
+            border-radius: 7px;
+        }
+
+        .formulario > .botao-principal {
+            height: 39px;
+            align-self: end;
+            border-radius: 7px;
+        }
+
+        .resumo {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .resumo .cartao {
+            min-height: 88px;
+            padding: 13px 15px;
+            border-left-width: 3px;
+            box-shadow: 0 2px 7px rgba(38, 50, 56, 0.05);
+        }
+
+        .resumo .cartao span {
+            margin-bottom: 5px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .resumo .cartao strong {
+            font-size: 22px;
+        }
+
+        .historico-cabecalho {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .historico-cabecalho .painel-cabecalho {
+            margin-bottom: 0;
+        }
+
+        .acoes-historico {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .acoes-historico button {
+            height: 35px;
+            padding: 0 12px;
+            border-radius: 7px;
+            font-size: 12px;
+        }
+
+        .filtros {
+            grid-template-columns:
+                minmax(230px, 1.35fr)
+                minmax(155px, 0.65fr)
+                minmax(190px, 0.85fr)
+                minmax(205px, 0.9fr)
+                minmax(300px, 1.05fr);
+            gap: 10px;
+            margin-bottom: 14px;
+            padding: 12px;
+            border: 1px solid #e4eaee;
+            border-radius: 9px;
+            background-color: #f8fafb;
+        }
+
+        .filtro-periodo {
+            gap: 7px;
+        }
+
+        .tabela-container {
+            border-radius: 9px;
+            box-shadow: inset 0 0 0 1px rgba(217, 225, 230, 0.25);
+        }
+
+        .rodape-informacao {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 1050px) {
+            .marca-textos {
+                display: none;
+            }
+
+            .formulario {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .filtros {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .filtro-periodo {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 650px) {
+            header {
+                padding: 12px;
+            }
+
+            header .cabecalho-conteudo {
+                align-items: flex-start;
+            }
+
+            .logo-cabecalho img {
+                width: 160px;
+            }
+
+            .usuario-logado {
+                padding-left: 8px;
+            }
+
+            .usuario-logado span {
+                display: none;
+            }
+
+            .abas-navegacao {
+                position: static;
+                flex-direction: row;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+
+            .botao-aba {
+                flex: 0 0 auto;
+            }
+
+            .formulario,
+            .filtros {
+                grid-template-columns: 1fr;
+            }
+
+            .filtro-periodo {
+                grid-column: auto;
+            }
+
+            .resumo {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .historico-cabecalho {
+                align-items: stretch;
+            }
+
+            .acoes-historico {
+                width: 100%;
+            }
+
+            .acoes-historico button {
+                flex: 1 1 auto;
+            }
+        }
+</style>
 </head>
-
 <body class="aplicacao-bloqueada">
-
-<div id="telaLogin" class="tela-login">
-    <div class="login-card">
-        <h1>Limerpak — Assistência Técnica</h1>
-        <p class="login-subtitulo">
+<div class="tela-login" id="telaLogin">
+<div class="login-card">
+<h1>Limerpak — Assistência Técnica</h1>
+<p class="login-subtitulo">
             Acompanhamento de cobranças e aprovações de orçamentos
         </p>
-
-        <form id="formLogin" class="form-login">
-            <div class="campo">
-                <label for="loginEmail">E-mail</label>
-                <input
-                    type="email"
-                    id="loginEmail"
-                    autocomplete="username"
-                    placeholder="seuemail@empresa.com"
-                    required
-                >
-            </div>
-
-            <div class="campo">
-                <label for="loginSenha">Senha</label>
-                <input
-                    type="password"
-                    id="loginSenha"
-                    autocomplete="current-password"
-                    placeholder="Digite sua senha"
-                    required
-                >
-            </div>
-
-            <button
-                type="submit"
-                id="botaoEntrar"
-                class="botao-principal botao-login"
-            >
+<form class="form-login" id="formLogin">
+<div class="campo">
+<label for="loginEmail">E-mail</label>
+<input autocomplete="username" id="loginEmail" placeholder="seuemail@empresa.com" required="" type="email"/>
+</div>
+<div class="campo">
+<label for="loginSenha">Senha</label>
+<input autocomplete="current-password" id="loginSenha" placeholder="Digite sua senha" required="" type="password"/>
+</div>
+<button class="botao-principal botao-login" id="botaoEntrar" type="submit">
                 Entrar
             </button>
-        </form>
-
-        <div id="loginMensagem" class="login-mensagem"></div>
-
-        <div class="login-observacao">
+</form>
+<div class="login-mensagem" id="loginMensagem"></div>
+<div class="login-observacao">
             O acesso é restrito aos usuários cadastrados no Firebase
             Authentication da Limerpak.
         </div>
-    </div>
 </div>
-
+</div>
 <header>
-    <div class="cabecalho-conteudo">
-        <div class="logo-cabecalho">
-            <img
-                src="data:image/png;base64,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"
-                alt="Logo da Limerpak"
-            >
-        </div>
-        <p>Acompanhamento de cobranças e aprovações de orçamentos</p>
+<div class="cabecalho-conteudo"><div class="marca-sistema"><div class="logo-cabecalho">
+<img alt="Logo da Limerpak" src="data:image/png;base64,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"/>
+</div><div class="marca-textos"><strong>Assistência Técnica / SMI</strong><span>Acompanhamento de cobranças e aprovações de orçamentos</span></div></div>
 
-        <div class="usuario-logado">
-            <span>
-                Usuário:
-                <strong id="emailUsuarioLogado">—</strong>
-            </span>
 
-            <button
-                type="button"
-                id="botaoSair"
-                class="botao-sair"
-            >
+<div class="usuario-logado">
+<span><strong id="emailUsuarioLogado">—</strong></span>
+<button class="botao-sair" id="botaoSair" type="button">
                 Sair
             </button>
-        </div>
-    </div>
+</div>
+</div>
 </header>
-
 <main>
-
-    <div class="abas-navegacao">
-        <button
-            type="button"
-            class="botao-aba ativo"
-            id="botaoAbaAcompanhamento"
-        >
+<div class="abas-navegacao">
+<button class="botao-aba ativo" id="botaoAbaAcompanhamento" type="button">
             Acompanhamento
         </button>
-
-        <button
-            type="button"
-            class="botao-aba aba-com-contador"
-            id="botaoAbaDevolucao"
-        >
-            <span>Devolução</span>
-            <span
-                id="contadorDevolucao"
-                class="contador-devolucao zerado"
-            >0</span>
-        </button>
-
-        <button
-            type="button"
-            class="botao-aba"
-            id="botaoAbaGraficos"
-        >
+<button class="botao-aba aba-com-contador" id="botaoAbaDevolucao" type="button">
+<span>Devolução</span>
+<span class="contador-devolucao zerado" id="contadorDevolucao">0</span>
+</button>
+<button class="botao-aba" id="botaoAbaGraficos" type="button">
             Dashboard
         </button>
-
-        <button
-            type="button"
-            class="botao-aba oculto"
-            id="botaoAbaLixeira"
-        >
+<button class="botao-aba oculto" id="botaoAbaLixeira" type="button">
             Lixeira
         </button>
-    </div>
-
-    <div id="abaAcompanhamento" class="conteudo-aba ativo">
-
-    <section class="painel">
-        <h2>Registrar nova cobrança</h2>
-
-        <form id="formCobranca" class="formulario">
-
-            <div class="campo">
-                <label for="ordemServico">O.S.</label>
-                <input
-                    type="text"
-                    id="ordemServico"
-                    placeholder="Ex.: 12345"
-                    required
-                >
-            </div>
-
-            <div class="campo">
-                <label for="notaFiscal">NF</label>
-                <input
-                    type="text"
-                    id="notaFiscal"
-                    placeholder="Ex.: 123456"
-                >
-            </div>
-
-            <div class="campo">
-                <label for="nomeCliente">Nome do cliente</label>
-                <input
-                    type="text"
-                    id="nomeCliente"
-                    placeholder="Ex.: Carlos Silva"
-                    required
-                >
-            </div>
-
-            <div class="campo">
-                <label for="empresa">Empresa</label>
-                <input
-                    type="text"
-                    id="empresa"
-                    placeholder="Ex.: Empresa ABC"
-                    required
-                >
-            </div>
-
-            <div class="campo">
-                <label for="canal">Forma de cobrança</label>
-                <select id="canal" required>
-                    <option value="">Selecione</option>
-                    <option value="BOT">BOT</option>
-                    <option value="E-mail">E-mail</option>
-                    <option value="Telefone">Telefone</option>
-                </select>
-            </div>
-
-            <div class="campo">
-                <label for="valorManutencao">Valor da manutenção</label>
-                <input
-                    type="text"
-                    id="valorManutencao"
-                    inputmode="decimal"
-                    placeholder="Ex.: 1.250,00"
-                    required
-                >
-            </div>
-
-            <div class="campo">
-                <label for="status">Situação</label>
-                <select id="status" required>
-                    <option value="Não respondido">Não respondido</option>
-                    <option value="Aprovado">Aprovado</option>
-                    <option value="Reprovado">Reprovado</option>
-                    <option value="Atualização">Atualização</option>
-                    <option value="Respondido - Em análise">Respondido - Em análise</option>
-                </select>
-            </div>
-
-            <button type="submit" class="botao-principal">
-                Registrar cobrança
-            </button>
-
-        </form>
-    </section>
-
-    <section class="resumo">
-        <div class="cartao">
-            <span>Total de registros</span>
-            <strong id="totalRegistros">0</strong>
-        </div>
-
-        <div class="cartao">
-            <span>Aprovados</span>
-            <strong id="totalAprovados">0</strong>
-        </div>
-
-        <div class="cartao">
-            <span>Não respondidos</span>
-            <strong id="totalNaoRespondidos">0</strong>
-        </div>
-
-        <div class="cartao">
-            <span>Em atualização</span>
-            <strong id="totalAtualizacoes">0</strong>
-        </div>
-
-        <div class="cartao">
-            <span>Valor total aprovado</span>
-            <strong id="valorTotalAprovado">R$ 0,00</strong>
-        </div>
-    </section>
-
-    <section class="painel">
-        <h2>Histórico de cobranças</h2>
-
-        <div class="filtros">
-
-            <div class="campo">
-                <label for="pesquisa">Pesquisar</label>
-                <input
-                    type="search"
-                    id="pesquisa"
-                    placeholder="Digite O.S., NF, cliente ou empresa"
-                >
-            </div>
-
-            <div class="campo">
-                <label for="filtroNF">Filtrar por NF</label>
-                <input
-                    type="search"
-                    id="filtroNF"
-                    placeholder="Digite o número da NF"
-                >
-            </div>
-
-            <div class="campo">
-                <label for="filtroStatus">Filtrar por situação</label>
-                <select id="filtroStatus">
-                    <option value="">Todos</option>
-                    <option value="Aprovado">Aprovados</option>
-                    <option value="Reprovado">Reprovados</option>
-                    <option value="Não respondido">Não respondidos</option>
-                    <option value="Atualização">Atualização</option>
-                    <option value="Respondido - Em análise">Respondido - Em análise</option>
-                </select>
-            </div>
-
-            <div class="campo">
-                <label for="ordenacaoTabela">Ordenar por</label>
-                <select id="ordenacaoTabela">
-                    <option value="">Ordem atual</option>
-                    <option value="cliente-az">Cliente: A até Z</option>
-                    <option value="cliente-za">Cliente: Z até A</option>
-                    <option value="data-desc">Data: mais recente primeiro</option>
-                    <option value="data-asc">Data: mais antiga primeiro</option>
-                    <option value="os-desc">O.S.: maior para menor</option>
-                    <option value="os-asc">O.S.: menor para maior</option>
-                </select>
-            </div>
-
-            <div class="filtro-periodo">
-                <div class="campo">
-                    <label for="filtroDataDe">Data: de</label>
-                    <input
-                        type="date"
-                        id="filtroDataDe"
-                        aria-label="Data inicial"
-                    >
-                </div>
-
-                <div class="campo">
-                    <label for="filtroDataAte">Até</label>
-                    <input
-                        type="date"
-                        id="filtroDataAte"
-                        aria-label="Data final"
-                    >
-                </div>
-            </div>
-
-            <button
-                type="button"
-                class="botao-secundario"
-                id="botaoImportar"
-            >
+</div>
+<div class="conteudo-aba ativo" id="abaAcompanhamento">
+<section class="painel painel-cadastro">
+<div class="painel-cabecalho"><div><h2>Nova cobrança</h2><p>Cadastre o acompanhamento do orçamento de forma rápida.</p></div></div>
+<form class="formulario" id="formCobranca">
+<div class="campo">
+<label for="ordemServico">O.S.</label>
+<input id="ordemServico" placeholder="Ex.: 12345" required="" type="text"/>
+</div>
+<div class="campo">
+<label for="notaFiscal">NF</label>
+<input id="notaFiscal" placeholder="Ex.: 123456" type="text"/>
+</div>
+<div class="campo">
+<label for="nomeCliente">Nome do cliente</label>
+<input id="nomeCliente" placeholder="Ex.: Carlos Silva" required="" type="text"/>
+</div>
+<div class="campo">
+<label for="empresa">Empresa</label>
+<input id="empresa" placeholder="Ex.: Empresa ABC" required="" type="text"/>
+</div>
+<div class="campo">
+<label for="canal">Forma de cobrança</label>
+<select id="canal" required="">
+<option value="">Selecione</option>
+<option value="BOT">BOT</option>
+<option value="E-mail">E-mail</option>
+<option value="Telefone">Telefone</option>
+</select>
+</div>
+<div class="campo">
+<label for="valorManutencao">Valor da manutenção</label>
+<input id="valorManutencao" inputmode="decimal" placeholder="Ex.: 1.250,00" required="" type="text"/>
+</div>
+<div class="campo">
+<label for="status">Situação</label>
+<select id="status" required="">
+<option value="Não respondido">Não respondido</option>
+<option value="Aprovado">Aprovado</option>
+<option value="Reprovado">Reprovado</option>
+<option value="Atualização">Atualização</option>
+<option value="Respondido - Em análise">Respondido - Em análise</option>
+</select>
+</div>
+<button class="botao-principal" type="submit">Registrar</button>
+</form>
+</section>
+<section class="resumo">
+<div class="cartao">
+<span>Total de registros</span>
+<strong id="totalRegistros">0</strong>
+</div>
+<div class="cartao">
+<span>Aprovados</span>
+<strong id="totalAprovados">0</strong>
+</div>
+<div class="cartao">
+<span>Não respondidos</span>
+<strong id="totalNaoRespondidos">0</strong>
+</div>
+<div class="cartao">
+<span>Em atualização</span>
+<strong id="totalAtualizacoes">0</strong>
+</div>
+<div class="cartao">
+<span>Valor total aprovado</span>
+<strong id="valorTotalAprovado">R$ 0,00</strong>
+</div>
+</section>
+<section class="painel">
+<div class="historico-cabecalho"><div class="painel-cabecalho"><div><h2>Histórico de cobranças</h2><p>Pesquise, filtre e consulte os registros sincronizados.</p></div></div><div class="acoes-historico"><button class="botao-secundario" id="botaoImportar" type="button">
                 Importar CSV
-            </button>
-
-            <input
-                type="file"
-                id="arquivoImportacao"
-                accept=".csv,text/csv"
-                hidden
-            >
-
-            <button
-                type="button"
-                class="botao-secundario"
-                id="botaoExportar"
-            >
+            </button><input accept=".csv,text/csv" hidden="" id="arquivoImportacao" type="file"/><button class="botao-secundario" id="botaoExportar" type="button">
                 Exportar CSV
-            </button>
-
-            <button
-                type="button"
-                class="botao-pdf"
-                id="botaoExportarPDF"
-            >
+            </button><button class="botao-pdf" id="botaoExportarPDF" type="button">
                 Exportar PDF
-            </button>
+            </button></div></div>
+<div class="filtros">
+<div class="campo">
+<label for="pesquisa">Pesquisar</label>
+<input id="pesquisa" placeholder="Digite O.S., NF, cliente ou empresa" type="search"/>
+</div>
+<div class="campo">
+<label for="filtroNF">Filtrar por NF</label>
+<input id="filtroNF" placeholder="Digite o número da NF" type="search"/>
+</div>
+<div class="campo">
+<label for="filtroStatus">Filtrar por situação</label>
+<select id="filtroStatus">
+<option value="">Todos</option>
+<option value="Aprovado">Aprovados</option>
+<option value="Reprovado">Reprovados</option>
+<option value="Não respondido">Não respondidos</option>
+<option value="Atualização">Atualização</option>
+<option value="Respondido - Em análise">Respondido - Em análise</option>
+</select>
+</div>
+<div class="campo">
+<label for="ordenacaoTabela">Ordenar por</label>
+<select id="ordenacaoTabela">
+<option value="">Ordem atual</option>
+<option value="cliente-az">Cliente: A até Z</option>
+<option value="cliente-za">Cliente: Z até A</option>
+<option value="data-desc">Data: mais recente primeiro</option>
+<option value="data-asc">Data: mais antiga primeiro</option>
+<option value="os-desc">O.S.: maior para menor</option>
+<option value="os-asc">O.S.: menor para maior</option>
+</select>
+</div>
+<div class="filtro-periodo">
+<div class="campo">
+<label for="filtroDataDe">Data: de</label>
+<input aria-label="Data inicial" id="filtroDataDe" type="date"/>
+</div>
+<div class="campo">
+<label for="filtroDataAte">Até</label>
+<input aria-label="Data final" id="filtroDataAte" type="date"/>
+</div>
+</div>
 
-        </div>
 
-        <div class="tabela-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Premium</th>
-                        <th>O.S.</th>
-                        <th>NF</th>
-                        <th>Cliente</th>
-                        <th>Empresa</th>
-                        <th>Canal</th>
-                        <th>Data e hora da cobrança</th>
-                        <th>Valor da manutenção</th>
-                        <th>Situação</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
 
-                <tbody id="corpoTabela"></tbody>
-            </table>
-        </div>
 
-        <div class="rodape-informacao">
-            <span id="statusSincronizacao" class="status-sincronizacao">
+</div>
+<div class="tabela-container">
+<table>
+<thead>
+<tr>
+<th>Premium</th>
+<th>O.S.</th>
+<th>NF</th>
+<th>Cliente</th>
+<th>Empresa</th>
+<th>Canal</th>
+<th>Data e hora da cobrança</th>
+<th>Valor da manutenção</th>
+<th>Situação</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="corpoTabela"></tbody>
+</table>
+</div>
+<div class="rodape-informacao">
+<span class="status-sincronizacao" id="statusSincronizacao">
                 Aguardando conexão com o Firebase...
             </span>
-        </div>
-    </section>
-
-
-    </div>
-
-
-    <div id="abaDevolucao" class="conteudo-aba">
-        <section class="painel">
-            <h2>Devolução</h2>
-
-            <div class="devolucao-aviso">
+</div>
+</section>
+</div>
+<div class="conteudo-aba" id="abaDevolucao">
+<section class="painel">
+<h2>Devolução</h2>
+<div class="devolucao-aviso">
                 Esta lista é preenchida automaticamente. Aparecem aqui as
                 cobranças que permanecem como <strong>Não respondido</strong>
                 após completar 7 dias desde a data do registro.
             </div>
-
-            <div class="tabela-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nº</th>
-                            <th>O.S.</th>
-                            <th>NF</th>
-                            <th>Cliente</th>
-                            <th>Empresa</th>
-                            <th>Canal</th>
-                            <th>Data da cobrança</th>
-                            <th>Dias sem resposta</th>
-                            <th>Valor</th>
-                            <th>Situação</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="corpoDevolucao"></tbody>
-                </table>
-            </div>
-        </section>
-    </div>
-
-    <div id="abaGraficos" class="conteudo-aba">
-        <div class="dashboard-cabecalho">
-            <div class="dashboard-periodo">
-                <div class="campo">
-                    <label for="dashboardDataDe">Analisar de</label>
-                    <input
-                        type="date"
-                        id="dashboardDataDe"
-                        aria-label="Data inicial do Dashboard"
-                    >
-                </div>
-
-                <div class="campo">
-                    <label for="dashboardDataAte">Até</label>
-                    <input
-                        type="date"
-                        id="dashboardDataAte"
-                        aria-label="Data final do Dashboard"
-                    >
-                </div>
-
-                <button
-                    type="button"
-                    id="botaoLimparPeriodoDashboard"
-                    class="botao-limpar-dashboard"
-                >
+<div class="tabela-container">
+<table>
+<thead>
+<tr>
+<th>Nº</th>
+<th>O.S.</th>
+<th>NF</th>
+<th>Cliente</th>
+<th>Empresa</th>
+<th>Canal</th>
+<th>Data da cobrança</th>
+<th>Dias sem resposta</th>
+<th>Valor</th>
+<th>Situação</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="corpoDevolucao"></tbody>
+</table>
+</div>
+</section>
+</div>
+<div class="conteudo-aba" id="abaGraficos">
+<div class="dashboard-cabecalho">
+<div class="dashboard-periodo">
+<div class="campo">
+<label for="dashboardDataDe">Analisar de</label>
+<input aria-label="Data inicial do Dashboard" id="dashboardDataDe" type="date"/>
+</div>
+<div class="campo">
+<label for="dashboardDataAte">Até</label>
+<input aria-label="Data final do Dashboard" id="dashboardDataAte" type="date"/>
+</div>
+<button class="botao-limpar-dashboard" id="botaoLimparPeriodoDashboard" type="button">
                     Limpar período
                 </button>
-
-                <div
-                    id="dashboardPeriodoInfo"
-                    class="dashboard-periodo-info"
-                >
+<div class="dashboard-periodo-info" id="dashboardPeriodoInfo">
                     Período analisado: todos os registros
                 </div>
-            </div>
-
-            <div
-                class="acoes-exportacao-graficos"
-                data-html2canvas-ignore="true"
-            >
-                <button
-                    type="button"
-                    class="botao-pdf"
-                    id="botaoExportarGraficosPDF"
-                >
+</div>
+<div class="acoes-exportacao-graficos" data-html2canvas-ignore="true">
+<button class="botao-pdf" id="botaoExportarGraficosPDF" type="button">
                     Exportar Dashboard em PDF
                 </button>
-            </div>
-        </div>
-
-        <section class="resumo-graficos">
-            <div class="cartao">
-                <span>Total de orçamentos cobrados</span>
-                <strong id="graficoTotalCobrados">0</strong>
-            </div>
-
-            <div class="cartao">
-                <span>Total de aprovados</span>
-                <strong id="graficoTotalAprovados">0</strong>
-            </div>
-
-            <div class="cartao">
-                <span>Total de reprovados</span>
-                <strong id="graficoTotalReprovados">0</strong>
-            </div>
-
-            <div class="cartao">
-                <span>Taxa de aprovação</span>
-                <strong id="graficoTaxaAprovacao">0%</strong>
-            </div>
-        </section>
-
-        <section class="painel">
-            <h2>Indicadores gerenciais</h2>
-
-            <div class="resumo-gerencial">
-                <div class="cartao cartao-gerencial tempo">
-                    <span>Tempo médio até aprovação</span>
-                    <strong id="gerencialTempoMedioAprovacao">—</strong>
-                    <small id="gerencialTempoMedioAprovacaoInfo">
+</div>
+</div>
+<section class="resumo-graficos">
+<div class="cartao">
+<span>Total de orçamentos cobrados</span>
+<strong id="graficoTotalCobrados">0</strong>
+</div>
+<div class="cartao">
+<span>Total de aprovados</span>
+<strong id="graficoTotalAprovados">0</strong>
+</div>
+<div class="cartao">
+<span>Total de reprovados</span>
+<strong id="graficoTotalReprovados">0</strong>
+</div>
+<div class="cartao">
+<span>Taxa de aprovação</span>
+<strong id="graficoTaxaAprovacao">0%</strong>
+</div>
+</section>
+<section class="painel">
+<h2>Indicadores gerenciais</h2>
+<div class="resumo-gerencial">
+<div class="cartao cartao-gerencial tempo">
+<span>Tempo médio até aprovação</span>
+<strong id="gerencialTempoMedioAprovacao">—</strong>
+<small id="gerencialTempoMedioAprovacaoInfo">
                         Aguardando histórico de aprovações.
                     </small>
-                </div>
-
-                <div class="cartao cartao-gerencial alerta">
-                    <span>Sem resposta há 7+ dias</span>
-                    <strong id="gerencialSeteDias">0</strong>
-                    <small id="gerencialSeteDiasInfo">
+</div>
+<div class="cartao cartao-gerencial alerta">
+<span>Sem resposta há 7+ dias</span>
+<strong id="gerencialSeteDias">0</strong>
+<small id="gerencialSeteDiasInfo">
                         0 em devolução • 0 premium
                     </small>
-                </div>
-
-                <div class="cartao cartao-gerencial financeiro">
-                    <span>Valor aguardando decisão</span>
-                    <strong id="gerencialValorEmAberto">R$ 0,00</strong>
-                    <small>
+</div>
+<div class="cartao cartao-gerencial financeiro">
+<span>Valor aguardando decisão</span>
+<strong id="gerencialValorEmAberto">R$ 0,00</strong>
+<small>
                         Não respondido, Em análise e Atualização.
                     </small>
-                </div>
-
-                <div class="cartao cartao-gerencial aberto">
-                    <span>Cobranças em aberto</span>
-                    <strong id="gerencialEmAberto">0</strong>
-                    <small id="gerencialEmAbertoInfo">
+</div>
+<div class="cartao cartao-gerencial aberto">
+<span>Cobranças em aberto</span>
+<strong id="gerencialEmAberto">0</strong>
+<small id="gerencialEmAbertoInfo">
                         Registros ainda sem decisão final.
                     </small>
-                </div>
-            </div>
-        </section>
-
-        <section class="painel">
-            <h2>Desempenho por atendente</h2>
-
-            <div class="tabela-container tabela-dashboard-gerencial">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Atendente</th>
-                            <th>Total</th>
-                            <th>Aprovados</th>
-                            <th>Reprovados</th>
-                            <th>Em aberto</th>
-                            <th>Taxa de aprovação</th>
-                        </tr>
-                    </thead>
-                    <tbody id="corpoDesempenhoAtendentes"></tbody>
-                </table>
-            </div>
-
-            <div class="nota-gerencial">
+</div>
+</div>
+</section>
+<section class="painel">
+<h2>Desempenho por atendente</h2>
+<div class="tabela-container tabela-dashboard-gerencial">
+<table>
+<thead>
+<tr>
+<th>Atendente</th>
+<th>Total</th>
+<th>Aprovados</th>
+<th>Reprovados</th>
+<th>Em aberto</th>
+<th>Taxa de aprovação</th>
+</tr>
+</thead>
+<tbody id="corpoDesempenhoAtendentes"></tbody>
+</table>
+</div>
+<div class="nota-gerencial">
                 A taxa por atendente considera somente decisões concluídas:
                 Aprovados ÷ (Aprovados + Reprovados). Registros ainda em
                 aberto não reduzem a taxa de aprovação.
             </div>
-        </section>
-
-        <section class="painel">
-            <h2>Relação gráfica dos orçamentos</h2>
-
-            <div class="painel-graficos">
-                <div>
-                    <canvas
-                        id="graficoStatusCanvas"
-                        class="grafico-canvas"
-                    ></canvas>
-
-                    <div class="grafico-info">
+</section>
+<section class="painel">
+<h2>Relação gráfica dos orçamentos</h2>
+<div class="painel-graficos">
+<div>
+<canvas class="grafico-canvas" id="graficoStatusCanvas"></canvas>
+<div class="grafico-info">
                         O gráfico apresenta a distribuição dos orçamentos por situação.
                     </div>
-                </div>
-
-                <div>
-                    <div id="listaIndicadoresStatus" class="legenda-status"></div>
-
-                    <div class="rodape-informacao">
+</div>
+<div>
+<div class="legenda-status" id="listaIndicadoresStatus"></div>
+<div class="rodape-informacao">
                         O valor total aprovado é recalculado automaticamente conforme as alterações na tabela.
                     </div>
-                </div>
-            </div>
-        </section>
-
-
-        <section class="painel">
-            <h2>Aprovações por forma de cobrança</h2>
-
-            <div class="resumo-canais">
-                <div class="cartao-canal">
-                    <span>Telefone</span>
-                    <strong id="percentualAprovadoTelefone">0%</strong>
-                    <small id="quantidadeAprovadoTelefone">0 aprovado(s)</small>
-                </div>
-
-                <div class="cartao-canal">
-                    <span>BOT</span>
-                    <strong id="percentualAprovadoBot">0%</strong>
-                    <small id="quantidadeAprovadoBot">0 aprovado(s)</small>
-                </div>
-
-                <div class="cartao-canal">
-                    <span>E-mail</span>
-                    <strong id="percentualAprovadoEmail">0%</strong>
-                    <small id="quantidadeAprovadoEmail">0 aprovado(s)</small>
-                </div>
-            </div>
-
-            <div class="painel-graficos">
-                <div>
-                    <canvas
-                        id="graficoCanaisAprovadosCanvas"
-                        class="grafico-canais-canvas"
-                    ></canvas>
-
-                    <div class="grafico-info">
+</div>
+</div>
+</section>
+<section class="painel">
+<h2>Aprovações por forma de cobrança</h2>
+<div class="resumo-canais">
+<div class="cartao-canal">
+<span>Telefone</span>
+<strong id="percentualAprovadoTelefone">0%</strong>
+<small id="quantidadeAprovadoTelefone">0 aprovado(s)</small>
+</div>
+<div class="cartao-canal">
+<span>BOT</span>
+<strong id="percentualAprovadoBot">0%</strong>
+<small id="quantidadeAprovadoBot">0 aprovado(s)</small>
+</div>
+<div class="cartao-canal">
+<span>E-mail</span>
+<strong id="percentualAprovadoEmail">0%</strong>
+<small id="quantidadeAprovadoEmail">0 aprovado(s)</small>
+</div>
+</div>
+<div class="painel-graficos">
+<div>
+<canvas class="grafico-canais-canvas" id="graficoCanaisAprovadosCanvas"></canvas>
+<div class="grafico-info">
                         Percentuais calculados sobre o total de orçamentos aprovados.
                     </div>
-                </div>
-
-                <div>
-                    <div
-                        id="listaIndicadoresCanaisAprovados"
-                        class="legenda-status"
-                    ></div>
-
-                    <div class="rodape-informacao">
+</div>
+<div>
+<div class="legenda-status" id="listaIndicadoresCanaisAprovados"></div>
+<div class="rodape-informacao">
                         Ao alterar a situação ou a forma de cobrança, este comparativo é atualizado automaticamente.
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="painel">
-            <h2>Valor aprovado</h2>
-
-            <div class="cartao">
-                <span>Valor total de orçamentos aprovados</span>
-                <strong id="graficoValorTotalAprovado">R$ 0,00</strong>
-            </div>
-        </section>
-    </div>
-
-    <div id="abaLixeira" class="conteudo-aba">
-        <section class="painel">
-            <h2>Lixeira</h2>
-
-            <div class="lixeira-aviso">
+</div>
+</div>
+</section>
+<section class="painel">
+<h2>Valor aprovado</h2>
+<div class="cartao">
+<span>Valor total de orçamentos aprovados</span>
+<strong id="graficoValorTotalAprovado">R$ 0,00</strong>
+</div>
+</section>
+</div>
+<div class="conteudo-aba" id="abaLixeira">
+<section class="painel">
+<h2>Lixeira</h2>
+<div class="lixeira-aviso">
                 Área restrita ao administrador. Os registros excluídos ficam
                 disponíveis para restauração por 3 dias. Depois desse prazo,
                 deixam de aparecer nesta tela.
             </div>
-
-            <div class="tabela-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>O.S.</th>
-                            <th>NF</th>
-                            <th>Cliente</th>
-                            <th>Empresa</th>
-                            <th>Valor</th>
-                            <th>Situação</th>
-                            <th>Excluído por</th>
-                            <th>Excluído em</th>
-                            <th>Tempo restante</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="corpoLixeira"></tbody>
-                </table>
-            </div>
-        </section>
-    </div>
-
-</main>
-
-
-
-<div id="modalInformacoes" class="modal-fundo" aria-hidden="true">
-    <div
-        class="modal-conteudo"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="tituloModalInformacoes"
-    >
-        <div class="modal-cabecalho">
-            <h2 id="tituloModalInformacoes">Informações do registro</h2>
-
-            <button
-                type="button"
-                id="botaoFecharInformacoes"
-                class="botao-fechar-modal"
-                aria-label="Fechar"
-            >
-                ×
-            </button>
-        </div>
-
-        <div class="info-registro-grid">
-            <div class="info-registro-item">
-                <span>O.S.</span>
-                <strong id="infoOS">—</strong>
-            </div>
-
-            <div class="info-registro-item">
-                <span>NF</span>
-                <strong id="infoNF">—</strong>
-            </div>
-
-            <div class="info-registro-item">
-                <span>Cliente</span>
-                <strong id="infoCliente">—</strong>
-            </div>
-
-            <div class="info-registro-item">
-                <span>Cliente Premium</span>
-                <strong id="infoPremium">—</strong>
-            </div>
-
-            <div class="info-registro-item">
-                <span>Registro criado por</span>
-                <strong id="infoCriadoPor">—</strong>
-            </div>
-
-            <div class="info-registro-item">
-                <span>Registro criado em</span>
-                <strong id="infoCriadoEm">—</strong>
-            </div>
-
-            <div class="info-registro-item">
-                <span>Última alteração por</span>
-                <strong id="infoAtualizadoPor">—</strong>
-            </div>
-
-            <div class="info-registro-item">
-                <span>Última alteração em</span>
-                <strong id="infoAtualizadoEm">—</strong>
-            </div>
-
-            <div class="info-registro-item">
-                <span>Finalizado por</span>
-                <strong id="infoFinalizadoPor">—</strong>
-            </div>
-
-            <div class="info-registro-item">
-                <span>Finalizado em</span>
-                <strong id="infoFinalizadoEm">—</strong>
-            </div>
-        </div>
-    </div>
+<div class="tabela-container">
+<table>
+<thead>
+<tr>
+<th>O.S.</th>
+<th>NF</th>
+<th>Cliente</th>
+<th>Empresa</th>
+<th>Valor</th>
+<th>Situação</th>
+<th>Excluído por</th>
+<th>Excluído em</th>
+<th>Tempo restante</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="corpoLixeira"></tbody>
+</table>
 </div>
-
-<div id="modalEdicao" class="modal-fundo" aria-hidden="true">
-    <div class="modal-conteudo" role="dialog" aria-modal="true" aria-labelledby="tituloModalEdicao">
-        <div class="modal-cabecalho">
-            <h2 id="tituloModalEdicao">Editar cobrança</h2>
-
-            <button
-                type="button"
-                id="botaoFecharModal"
-                class="botao-fechar-modal"
-                aria-label="Fechar"
-            >
+</section>
+</div>
+</main>
+<div aria-hidden="true" class="modal-fundo" id="modalInformacoes">
+<div aria-labelledby="tituloModalInformacoes" aria-modal="true" class="modal-conteudo" role="dialog">
+<div class="modal-cabecalho">
+<h2 id="tituloModalInformacoes">Informações do registro</h2>
+<button aria-label="Fechar" class="botao-fechar-modal" id="botaoFecharInformacoes" type="button">
                 ×
             </button>
-        </div>
-
-        <form id="formEdicao">
-            <div class="formulario-edicao">
-                <div class="campo">
-                    <label for="editarOrdemServico">O.S.</label>
-                    <input type="text" id="editarOrdemServico" required>
-                </div>
-
-                <div class="campo">
-                    <label for="editarNotaFiscal">NF</label>
-                    <input type="text" id="editarNotaFiscal">
-                </div>
-
-                <div class="campo">
-                    <label for="editarNomeCliente">Nome do cliente</label>
-                    <input type="text" id="editarNomeCliente" required>
-                </div>
-
-                <div class="campo">
-                    <label for="editarEmpresa">Empresa</label>
-                    <input type="text" id="editarEmpresa" required>
-                </div>
-
-                <div class="campo">
-                    <label for="editarCanal">Forma de cobrança</label>
-                    <select id="editarCanal" required>
-                        <option value="BOT">BOT</option>
-                        <option value="E-mail">E-mail</option>
-                        <option value="Telefone">Telefone</option>
-                    </select>
-                </div>
-
-                <div class="campo">
-                    <label for="editarDataHora">Data e hora da cobrança</label>
-                    <input type="datetime-local" id="editarDataHora" required>
-                </div>
-
-                <div class="campo">
-                    <label for="editarValorManutencao">Valor da manutenção</label>
-                    <input
-                        type="text"
-                        id="editarValorManutencao"
-                        inputmode="decimal"
-                        required
-                    >
-                </div>
-
-                <div class="campo">
-                    <label for="editarStatus">Situação</label>
-                    <select id="editarStatus" required>
-                        <option value="Aprovado">Aprovado</option>
-                        <option value="Reprovado">Reprovado</option>
-                        <option value="Não respondido">Não respondido</option>
-                        <option value="Atualização">Atualização</option>
-                        <option value="Respondido - Em análise">Respondido - Em análise</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="acoes-modal">
-                <button
-                    type="button"
-                    id="botaoCancelarEdicao"
-                    class="botao-cancelar"
-                >
+</div>
+<div class="info-registro-grid">
+<div class="info-registro-item">
+<span>O.S.</span>
+<strong id="infoOS">—</strong>
+</div>
+<div class="info-registro-item">
+<span>NF</span>
+<strong id="infoNF">—</strong>
+</div>
+<div class="info-registro-item">
+<span>Cliente</span>
+<strong id="infoCliente">—</strong>
+</div>
+<div class="info-registro-item">
+<span>Cliente Premium</span>
+<strong id="infoPremium">—</strong>
+</div>
+<div class="info-registro-item">
+<span>Registro criado por</span>
+<strong id="infoCriadoPor">—</strong>
+</div>
+<div class="info-registro-item">
+<span>Registro criado em</span>
+<strong id="infoCriadoEm">—</strong>
+</div>
+<div class="info-registro-item">
+<span>Última alteração por</span>
+<strong id="infoAtualizadoPor">—</strong>
+</div>
+<div class="info-registro-item">
+<span>Última alteração em</span>
+<strong id="infoAtualizadoEm">—</strong>
+</div>
+<div class="info-registro-item">
+<span>Finalizado por</span>
+<strong id="infoFinalizadoPor">—</strong>
+</div>
+<div class="info-registro-item">
+<span>Finalizado em</span>
+<strong id="infoFinalizadoEm">—</strong>
+</div>
+</div>
+</div>
+</div>
+<div aria-hidden="true" class="modal-fundo" id="modalEdicao">
+<div aria-labelledby="tituloModalEdicao" aria-modal="true" class="modal-conteudo" role="dialog">
+<div class="modal-cabecalho">
+<h2 id="tituloModalEdicao">Editar cobrança</h2>
+<button aria-label="Fechar" class="botao-fechar-modal" id="botaoFecharModal" type="button">
+                ×
+            </button>
+</div>
+<form id="formEdicao">
+<div class="formulario-edicao">
+<div class="campo">
+<label for="editarOrdemServico">O.S.</label>
+<input id="editarOrdemServico" required="" type="text"/>
+</div>
+<div class="campo">
+<label for="editarNotaFiscal">NF</label>
+<input id="editarNotaFiscal" type="text"/>
+</div>
+<div class="campo">
+<label for="editarNomeCliente">Nome do cliente</label>
+<input id="editarNomeCliente" required="" type="text"/>
+</div>
+<div class="campo">
+<label for="editarEmpresa">Empresa</label>
+<input id="editarEmpresa" required="" type="text"/>
+</div>
+<div class="campo">
+<label for="editarCanal">Forma de cobrança</label>
+<select id="editarCanal" required="">
+<option value="BOT">BOT</option>
+<option value="E-mail">E-mail</option>
+<option value="Telefone">Telefone</option>
+</select>
+</div>
+<div class="campo">
+<label for="editarDataHora">Data e hora da cobrança</label>
+<input id="editarDataHora" required="" type="datetime-local"/>
+</div>
+<div class="campo">
+<label for="editarValorManutencao">Valor da manutenção</label>
+<input id="editarValorManutencao" inputmode="decimal" required="" type="text"/>
+</div>
+<div class="campo">
+<label for="editarStatus">Situação</label>
+<select id="editarStatus" required="">
+<option value="Aprovado">Aprovado</option>
+<option value="Reprovado">Reprovado</option>
+<option value="Não respondido">Não respondido</option>
+<option value="Atualização">Atualização</option>
+<option value="Respondido - Em análise">Respondido - Em análise</option>
+</select>
+</div>
+</div>
+<div class="acoes-modal">
+<button class="botao-cancelar" id="botaoCancelarEdicao" type="button">
                     Cancelar
                 </button>
-
-                <button type="submit" class="botao-principal">
+<button class="botao-principal" type="submit">
                     Salvar alterações
                 </button>
-            </div>
-        </form>
-    </div>
 </div>
-
+</form>
+</div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
@@ -6584,6 +6636,5 @@
 
     renderizarTabela();
 </script>
-
 </body>
 </html>
