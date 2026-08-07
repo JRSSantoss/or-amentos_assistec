@@ -936,6 +936,15 @@
             </div>
 
             <div class="campo">
+                <label for="notaFiscal">NF</label>
+                <input
+                    type="text"
+                    id="notaFiscal"
+                    placeholder="Ex.: 123456"
+                >
+            </div>
+
+            <div class="campo">
                 <label for="nomeCliente">Nome do cliente</label>
                 <input
                     type="text"
@@ -1027,11 +1036,20 @@
         <div class="filtros">
 
             <div class="campo">
-                <label for="pesquisa">Pesquisar cliente ou empresa</label>
+                <label for="pesquisa">Pesquisar</label>
                 <input
                     type="search"
                     id="pesquisa"
-                    placeholder="Digite O.S., cliente ou empresa"
+                    placeholder="Digite O.S., NF, cliente ou empresa"
+                >
+            </div>
+
+            <div class="campo">
+                <label for="filtroNF">Filtrar por NF</label>
+                <input
+                    type="search"
+                    id="filtroNF"
+                    placeholder="Digite o número da NF"
                 >
             </div>
 
@@ -1107,6 +1125,7 @@
                     <tr>
                         <th>Nº</th>
                         <th>O.S.</th>
+                        <th>NF</th>
                         <th>Cliente</th>
                         <th>Empresa</th>
                         <th>Canal</th>
@@ -1266,6 +1285,7 @@
                     <thead>
                         <tr>
                             <th>O.S.</th>
+                            <th>NF</th>
                             <th>Cliente</th>
                             <th>Empresa</th>
                             <th>Valor</th>
@@ -1311,6 +1331,11 @@
             <div class="info-registro-item">
                 <span>O.S.</span>
                 <strong id="infoOS">—</strong>
+            </div>
+
+            <div class="info-registro-item">
+                <span>NF</span>
+                <strong id="infoNF">—</strong>
             </div>
 
             <div class="info-registro-item">
@@ -1361,6 +1386,11 @@
                 <div class="campo">
                     <label for="editarOrdemServico">O.S.</label>
                     <input type="text" id="editarOrdemServico" required>
+                </div>
+
+                <div class="campo">
+                    <label for="editarNotaFiscal">NF</label>
+                    <input type="text" id="editarNotaFiscal">
                 </div>
 
                 <div class="campo">
@@ -1498,6 +1528,7 @@
 
     const formCobranca = document.getElementById("formCobranca");
     const ordemServico = document.getElementById("ordemServico");
+    const notaFiscal = document.getElementById("notaFiscal");
     const nomeCliente = document.getElementById("nomeCliente");
     const empresa = document.getElementById("empresa");
     const canal = document.getElementById("canal");
@@ -1507,6 +1538,7 @@
         formCobranca.querySelector('button[type="submit"]');
 
     const pesquisa = document.getElementById("pesquisa");
+    const filtroNF = document.getElementById("filtroNF");
     const filtroStatus = document.getElementById("filtroStatus");
     const ordenacaoTabela =
         document.getElementById("ordenacaoTabela");
@@ -1558,6 +1590,7 @@
     const botaoFecharInformacoes =
         document.getElementById("botaoFecharInformacoes");
     const infoOS = document.getElementById("infoOS");
+    const infoNF = document.getElementById("infoNF");
     const infoCliente = document.getElementById("infoCliente");
     const infoCriadoPor =
         document.getElementById("infoCriadoPor");
@@ -1576,6 +1609,8 @@
         document.getElementById("botaoCancelarEdicao");
     const editarOrdemServico =
         document.getElementById("editarOrdemServico");
+    const editarNotaFiscal =
+        document.getElementById("editarNotaFiscal");
     const editarNomeCliente =
         document.getElementById("editarNomeCliente");
     const editarEmpresa =
@@ -1641,6 +1676,7 @@
 
     function abrirModalInformacoes(registro) {
         infoOS.textContent = registro.ordemServico || "—";
+        infoNF.textContent = registro.notaFiscal || "—";
         infoCliente.textContent = registro.nomeCliente || "—";
         infoCriadoPor.textContent = registro.criadoPor || "Não informado";
         infoCriadoEm.textContent = registro.criadoEm
@@ -2238,6 +2274,7 @@
 
         registroEmEdicaoId = id;
         editarOrdemServico.value = registro.ordemServico || "";
+        editarNotaFiscal.value = registro.notaFiscal || "";
         editarNomeCliente.value = registro.nomeCliente || "";
         editarEmpresa.value = registro.empresa || "";
         editarCanal.value = registro.canal || "E-mail";
@@ -2302,6 +2339,8 @@
                 {
                     ordemServico:
                         editarOrdemServico.value.trim(),
+                    notaFiscal:
+                        editarNotaFiscal.value.trim(),
                     nomeCliente:
                         editarNomeCliente.value.trim(),
                     empresa:
@@ -2488,6 +2527,7 @@
     function criarChaveRegistro(cobranca) {
         return [
             cobranca.ordemServico,
+            cobranca.notaFiscal,
             cobranca.nomeCliente,
             cobranca.empresa,
             cobranca.canal,
@@ -2525,6 +2565,13 @@
             "o.s",
             "os",
             "ordem de servico"
+        );
+        const indiceNF = localizarColuna(
+            "nf",
+            "n.f.",
+            "nota fiscal",
+            "numero da nf",
+            "numero da nota fiscal"
         );
         const indiceCliente = localizarColuna("cliente");
         const indiceEmpresa = localizarColuna("empresa");
@@ -2609,6 +2656,12 @@
                         indiceOS >= 0
                             ? String(
                                 linha[indiceOS] || ""
+                            ).trim()
+                            : "",
+                    notaFiscal:
+                        indiceNF >= 0
+                            ? String(
+                                linha[indiceNF] || ""
                             ).trim()
                             : "",
                     nomeCliente:
@@ -2720,6 +2773,7 @@
             lote.set(referenciaLixeira, {
                 origemId: id,
                 ordemServico: registro.ordemServico || "",
+                notaFiscal: registro.notaFiscal || "",
                 nomeCliente: registro.nomeCliente || "",
                 empresa: registro.empresa || "",
                 canal: registro.canal || "",
@@ -2836,6 +2890,10 @@
             .trim()
             .toLocaleLowerCase("pt-BR");
 
+        const nfSelecionada = filtroNF.value
+            .trim()
+            .toLocaleLowerCase("pt-BR");
+
         const statusSelecionado =
             filtroStatus.value;
 
@@ -2844,6 +2902,13 @@
                 const osCorresponde =
                     String(
                         cobranca.ordemServico || ""
+                    )
+                        .toLocaleLowerCase("pt-BR")
+                        .includes(textoPesquisa);
+
+                const nfCorrespondePesquisa =
+                    String(
+                        cobranca.notaFiscal || ""
                     )
                         .toLocaleLowerCase("pt-BR")
                         .includes(textoPesquisa);
@@ -2864,8 +2929,17 @@
 
                 const textoCorresponde =
                     osCorresponde ||
+                    nfCorrespondePesquisa ||
                     clienteCorresponde ||
                     empresaCorresponde;
+
+                const nfCorrespondeFiltro =
+                    !nfSelecionada ||
+                    String(
+                        cobranca.notaFiscal || ""
+                    )
+                        .toLocaleLowerCase("pt-BR")
+                        .includes(nfSelecionada);
 
                 const statusCorresponde =
                     !statusSelecionado ||
@@ -2874,6 +2948,7 @@
 
                 return (
                     textoCorresponde &&
+                    nfCorrespondeFiltro &&
                     statusCorresponde
                 );
             });
@@ -2896,7 +2971,7 @@
             const celula =
                 document.createElement("td");
 
-            celula.colSpan = 9;
+            celula.colSpan = 10;
             celula.className = "sem-registros";
             celula.textContent =
                 "Nenhum registro encontrado.";
@@ -2919,6 +2994,11 @@
                 linha.appendChild(
                     criarCelula(
                         cobranca.ordemServico || "—"
+                    )
+                );
+                linha.appendChild(
+                    criarCelula(
+                        cobranca.notaFiscal || "—"
                     )
                 );
                 linha.appendChild(
@@ -3179,6 +3259,11 @@
                             registro.ordemServico ||
                             ""
                         ),
+                    notaFiscal:
+                        String(
+                            registro.notaFiscal ||
+                            ""
+                        ),
                     nomeCliente:
                         String(
                             registro.nomeCliente ||
@@ -3239,7 +3324,7 @@
             const linha = document.createElement("tr");
             const celula = document.createElement("td");
 
-            celula.colSpan = 9;
+            celula.colSpan = 10;
             celula.className = "sem-registros";
             celula.textContent = "A lixeira está vazia.";
 
@@ -3253,6 +3338,9 @@
 
             linha.appendChild(
                 criarCelula(item.ordemServico || "—")
+            );
+            linha.appendChild(
+                criarCelula(item.notaFiscal || "—")
             );
             linha.appendChild(
                 criarCelula(item.nomeCliente || "—")
@@ -3356,6 +3444,7 @@
 
             lote.set(refAtivo, {
                 ordemServico: item.ordemServico || "",
+                notaFiscal: item.notaFiscal || "",
                 nomeCliente: item.nomeCliente || "",
                 empresa: item.empresa || "",
                 canal: item.canal || "",
@@ -3441,6 +3530,10 @@
                             ordemServico:
                                 String(
                                     dados.ordemServico || ""
+                                ),
+                            notaFiscal:
+                                String(
+                                    dados.notaFiscal || ""
                                 ),
                             nomeCliente:
                                 String(
@@ -3585,6 +3678,11 @@
                                     ordemServico:
                                         String(
                                             dados.ordemServico ||
+                                            ""
+                                        ),
+                                    notaFiscal:
+                                        String(
+                                            dados.notaFiscal ||
                                             ""
                                         ),
                                     nomeCliente:
@@ -3942,6 +4040,8 @@
                     {
                         ordemServico:
                             ordemServico.value.trim(),
+                        notaFiscal:
+                            notaFiscal.value.trim(),
                         nomeCliente:
                             nomeCliente.value.trim(),
                         empresa:
@@ -4010,6 +4110,10 @@
     );
 
     pesquisa.addEventListener(
+        "input",
+        renderizarTabela
+    );
+    filtroNF.addEventListener(
         "input",
         renderizarTabela
     );
@@ -4271,6 +4375,14 @@
             );
         }
 
+        const nf = filtroNF.value.trim();
+
+        if (nf) {
+            partes.push(
+                `NF: ${nf}`
+            );
+        }
+
         return partes.join(" | ");
     }
 
@@ -4356,6 +4468,7 @@
                 (registro, indice) => [
                     indice + 1,
                     registro.ordemServico || "—",
+                    registro.notaFiscal || "—",
                     registro.nomeCliente || "—",
                     registro.empresa || "—",
                     registro.canal || "—",
@@ -4374,6 +4487,7 @@
                 head: [[
                     "Nº",
                     "O.S.",
+                    "NF",
                     "Cliente",
                     "Empresa",
                     "Canal",
@@ -4400,20 +4514,23 @@
                         halign: "center"
                     },
                     1: {
-                        cellWidth: 20
+                        cellWidth: 18
                     },
-                    4: {
-                        cellWidth: 22
+                    2: {
+                        cellWidth: 18
                     },
                     5: {
-                        cellWidth: 32
+                        cellWidth: 20
                     },
                     6: {
-                        cellWidth: 27,
-                        halign: "right"
+                        cellWidth: 30
                     },
                     7: {
-                        cellWidth: 34
+                        cellWidth: 25,
+                        halign: "right"
+                    },
+                    8: {
+                        cellWidth: 32
                     }
                 },
                 margin: {
@@ -4635,6 +4752,7 @@
             const cabecalho = [
                 "Número",
                 "O.S.",
+                "NF",
                 "Cliente",
                 "Empresa",
                 "Canal",
@@ -4647,6 +4765,7 @@
                 (cobranca, indice) => [
                     indice + 1,
                     cobranca.ordemServico || "",
+                    cobranca.notaFiscal || "",
                     cobranca.nomeCliente,
                     cobranca.empresa,
                     cobranca.canal,
