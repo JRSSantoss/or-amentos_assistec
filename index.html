@@ -168,10 +168,65 @@
 
         .filtros {
             display: grid;
-            grid-template-columns: minmax(250px, 1fr) 220px 260px auto auto auto;
+            grid-template-columns:
+                minmax(240px, 1fr)
+                190px
+                220px
+                230px
+                minmax(310px, auto);
             gap: 12px;
             align-items: end;
             margin-bottom: 18px;
+        }
+
+        .filtro-periodo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            align-items: end;
+        }
+
+        .filtro-periodo .campo {
+            min-width: 145px;
+        }
+
+        .registro-finalizado,
+        .registro-finalizado:hover {
+            background-color: #f1f4f6 !important;
+        }
+
+        .registro-finalizado td {
+            opacity: 0.55;
+        }
+
+        .registro-finalizado .menu-acoes,
+        .registro-finalizado .opcoes-acoes {
+            opacity: 1;
+        }
+
+        .registro-finalizado .status-select {
+            cursor: not-allowed;
+            background-color: #eceff1;
+        }
+
+        .botao-finalizar {
+            width: 100%;
+            height: 32px;
+            padding: 0 10px;
+            text-align: left;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .identificador-finalizado {
+            display: inline-block;
+            margin-top: 5px;
+            padding: 3px 7px;
+            border-radius: 999px;
+            background-color: #eceff1;
+            color: #607d8b;
+            font-size: 11px;
+            font-weight: bold;
         }
 
         .tabela-container {
@@ -558,6 +613,10 @@
                 grid-template-columns: 1fr 1fr;
             }
 
+            .filtro-periodo {
+                grid-column: 1 / -1;
+            }
+
             .painel-graficos {
                 grid-template-columns: 1fr;
             }
@@ -578,6 +637,11 @@
             .resumo-canais,
             .filtros {
                 grid-template-columns: 1fr;
+            }
+
+            .filtro-periodo {
+                grid-template-columns: 1fr;
+                grid-column: auto;
             }
 
             .abas-navegacao {
@@ -1183,6 +1247,26 @@
                 </select>
             </div>
 
+            <div class="filtro-periodo">
+                <div class="campo">
+                    <label for="filtroDataDe">Data: de</label>
+                    <input
+                        type="date"
+                        id="filtroDataDe"
+                        aria-label="Data inicial"
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="filtroDataAte">Até</label>
+                    <input
+                        type="date"
+                        id="filtroDataAte"
+                        aria-label="Data final"
+                    >
+                </div>
+            </div>
+
             <button
                 type="button"
                 class="botao-secundario"
@@ -1502,6 +1586,16 @@
                 <span>Última alteração em</span>
                 <strong id="infoAtualizadoEm">—</strong>
             </div>
+
+            <div class="info-registro-item">
+                <span>Finalizado por</span>
+                <strong id="infoFinalizadoPor">—</strong>
+            </div>
+
+            <div class="info-registro-item">
+                <span>Finalizado em</span>
+                <strong id="infoFinalizadoEm">—</strong>
+            </div>
         </div>
     </div>
 </div>
@@ -1688,6 +1782,10 @@
     const pesquisa = document.getElementById("pesquisa");
     const filtroNF = document.getElementById("filtroNF");
     const filtroStatus = document.getElementById("filtroStatus");
+    const filtroDataDe =
+        document.getElementById("filtroDataDe");
+    const filtroDataAte =
+        document.getElementById("filtroDataAte");
     const ordenacaoTabela =
         document.getElementById("ordenacaoTabela");
     const corpoTabela = document.getElementById("corpoTabela");
@@ -1748,6 +1846,10 @@
         document.getElementById("infoAtualizadoPor");
     const infoAtualizadoEm =
         document.getElementById("infoAtualizadoEm");
+    const infoFinalizadoPor =
+        document.getElementById("infoFinalizadoPor");
+    const infoFinalizadoEm =
+        document.getElementById("infoFinalizadoEm");
 
     const modalEdicao = document.getElementById("modalEdicao");
     const formEdicao = document.getElementById("formEdicao");
@@ -1835,6 +1937,16 @@
         infoAtualizadoEm.textContent = registro.atualizadoEm
             ? formatarData(registro.atualizadoEm)
             : "Não informado";
+
+        infoFinalizadoPor.textContent =
+            registro.finalizado
+                ? (registro.finalizadoPor || "Não informado")
+                : "Não finalizado";
+
+        infoFinalizadoEm.textContent =
+            registro.finalizado && registro.finalizadoEm
+                ? formatarData(registro.finalizadoEm)
+                : "Não finalizado";
 
         modalInformacoes.classList.add("aberto");
         modalInformacoes.setAttribute("aria-hidden", "false");
@@ -1969,6 +2081,7 @@
         return cobrancas
             .filter(cobranca => {
                 if (
+                    cobranca.finalizado ||
                     cobranca.status !==
                     "Não respondido"
                 ) {
@@ -2052,6 +2165,14 @@
             (cobranca, indice) => {
                 const linha =
                     document.createElement("tr");
+
+                if (cobranca.finalizado) {
+                    linha.classList.add(
+                        "registro-finalizado"
+                    );
+                    linha.title =
+                        "Registro finalizado — edição bloqueada";
+                }
 
                 linha.appendChild(
                     criarCelula(indice + 1)
@@ -2741,6 +2862,14 @@
             return;
         }
 
+        if (registro.finalizado) {
+            alert(
+                "Este registro já foi finalizado e não pode mais ser editado."
+            );
+            fecharTodosMenusAcoes();
+            return;
+        }
+
         registroEmEdicaoId = id;
         editarOrdemServico.value = registro.ordemServico || "";
         editarNotaFiscal.value = registro.notaFiscal || "";
@@ -2775,6 +2904,19 @@
         evento.preventDefault();
 
         if (!registroEmEdicaoId || !auth.currentUser) {
+            return;
+        }
+
+        const registroAtual =
+            cobrancas.find(
+                item => item.id === registroEmEdicaoId
+            );
+
+        if (!registroAtual || registroAtual.finalizado) {
+            alert(
+                "Este registro foi finalizado e não pode mais ser editado."
+            );
+            fecharModalEdicao();
             return;
         }
 
@@ -3057,6 +3199,9 @@
             "situacao",
             "status"
         );
+        const indiceFinalizado = localizarColuna(
+            "finalizado"
+        );
 
         const indicesObrigatorios = [
             indiceCliente,
@@ -3147,7 +3292,17 @@
                         Number.isFinite(valorConvertido)
                             ? valorConvertido
                             : 0,
-                    status: situacao
+                    status: situacao,
+                    finalizado:
+                        indiceFinalizado >= 0
+                            ? ["sim", "true", "1", "finalizado"].includes(
+                                String(
+                                    linha[indiceFinalizado] || ""
+                                )
+                                    .trim()
+                                    .toLocaleLowerCase("pt-BR")
+                            )
+                            : false
                 };
             })
             .filter(Boolean);
@@ -3192,6 +3347,18 @@
             return;
         }
 
+        const registro =
+            cobrancas.find(item => item.id === id);
+
+        if (registro?.finalizado) {
+            alert(
+                "Este registro já foi finalizado e não pode mais ser alterado."
+            );
+            renderizarTabela();
+            renderizarDevolucao();
+            return;
+        }
+
         try {
             await updateDoc(
                 doc(db, "orcamentos", id),
@@ -3211,6 +3378,56 @@
                 "Não foi possível atualizar a situação no Firebase."
             );
             renderizarTabela();
+        }
+    }
+
+    async function finalizarCobranca(id) {
+        if (!auth.currentUser) {
+            return;
+        }
+
+        const registro =
+            cobrancas.find(item => item.id === id);
+
+        if (!registro || registro.finalizado) {
+            return;
+        }
+
+        const confirmar = confirm(
+            `Deseja finalizar a cobrança da O.S. ` +
+            `${registro.ordemServico || "sem número"}?\n\n` +
+            "Depois de finalizado, o registro ficará bloqueado para edição " +
+            "e será movido para o final da tabela."
+        );
+
+        if (!confirmar) {
+            return;
+        }
+
+        try {
+            await updateDoc(
+                doc(db, "orcamentos", id),
+                {
+                    finalizado: true,
+                    finalizadoEm: serverTimestamp(),
+                    finalizadoPor:
+                        auth.currentUser.email || "",
+                    atualizadoEm: serverTimestamp(),
+                    atualizadoPor:
+                        auth.currentUser.email || ""
+                }
+            );
+
+            fecharTodosMenusAcoes();
+        } catch (erro) {
+            console.error(
+                "Erro ao finalizar registro:",
+                erro
+            );
+
+            alert(
+                "Não foi possível finalizar o registro no Firebase."
+            );
         }
     }
 
@@ -3249,6 +3466,9 @@
                 dataHora: registro.dataHora || new Date().toISOString(),
                 valorManutencao: Number(registro.valorManutencao || 0),
                 status: registro.status || "Não respondido",
+                finalizado: Boolean(registro.finalizado),
+                finalizadoPor: registro.finalizadoPor || "",
+                finalizadoEm: registro.finalizadoEm || "",
                 criadoPor: registro.criadoPor || "",
                 criadoEm: registro.criadoEm || "",
                 atualizadoPor: registro.atualizadoPor || "",
@@ -3351,7 +3571,20 @@
                 );
         }
 
-        return registrosOrdenados;
+        const ativos =
+            registrosOrdenados.filter(
+                registro => !registro.finalizado
+            );
+
+        const finalizados =
+            registrosOrdenados.filter(
+                registro => registro.finalizado
+            );
+
+        return [
+            ...ativos,
+            ...finalizados
+        ];
     }
 
     function obterCobrancasFiltradasAtuais() {
@@ -3365,6 +3598,25 @@
 
         const statusSelecionado =
             filtroStatus.value;
+
+        const dataDeSelecionada =
+            filtroDataDe.value;
+        const dataAteSelecionada =
+            filtroDataAte.value;
+
+        const inicioPeriodo =
+            dataDeSelecionada
+                ? new Date(
+                    `${dataDeSelecionada}T00:00:00`
+                ).getTime()
+                : null;
+
+        const fimPeriodo =
+            dataAteSelecionada
+                ? new Date(
+                    `${dataAteSelecionada}T23:59:59.999`
+                ).getTime()
+                : null;
 
         let cobrancasFiltradas =
             cobrancas.filter(cobranca => {
@@ -3415,10 +3667,27 @@
                     cobranca.status ===
                         statusSelecionado;
 
+                const dataRegistro =
+                    new Date(
+                        cobranca.dataHora
+                    ).getTime();
+
+                const dataCorresponde =
+                    !Number.isNaN(dataRegistro) &&
+                    (
+                        inicioPeriodo === null ||
+                        dataRegistro >= inicioPeriodo
+                    ) &&
+                    (
+                        fimPeriodo === null ||
+                        dataRegistro <= fimPeriodo
+                    );
+
                 return (
                     textoCorresponde &&
                     nfCorrespondeFiltro &&
-                    statusCorresponde
+                    statusCorresponde &&
+                    dataCorresponde
                 );
             });
 
@@ -3517,6 +3786,9 @@
                         cobranca.status
                     )}`;
 
+                seletorStatus.disabled =
+                    Boolean(cobranca.finalizado);
+
                 const opcoesStatus = [
                     "Aprovado",
                     "Reprovado",
@@ -3572,6 +3844,8 @@
                     document.createElement("button");
                 const botaoEditar =
                     document.createElement("button");
+                const botaoFinalizar =
+                    document.createElement("button");
                 const botaoExcluirRegistro =
                     document.createElement("button");
 
@@ -3600,6 +3874,12 @@
                 botaoEditar.className =
                     "botao-editar";
                 botaoEditar.textContent = "Editar";
+
+                botaoFinalizar.type = "button";
+                botaoFinalizar.className =
+                    "botao-finalizar";
+                botaoFinalizar.textContent =
+                    "Finalizar";
 
                 botaoExcluirRegistro.type =
                     "button";
@@ -3642,6 +3922,15 @@
                     }
                 );
 
+                botaoFinalizar.addEventListener(
+                    "click",
+                    async () => {
+                        await finalizarCobranca(
+                            cobranca.id
+                        );
+                    }
+                );
+
                 botaoExcluirRegistro
                     .addEventListener(
                         "click",
@@ -3656,9 +3945,16 @@
                 opcoesAcoes.appendChild(
                     botaoInformacoes
                 );
-                opcoesAcoes.appendChild(
-                    botaoEditar
-                );
+
+                if (!cobranca.finalizado) {
+                    opcoesAcoes.appendChild(
+                        botaoEditar
+                    );
+                    opcoesAcoes.appendChild(
+                        botaoFinalizar
+                    );
+                }
+
                 opcoesAcoes.appendChild(
                     botaoExcluirRegistro
                 );
@@ -3759,6 +4055,12 @@
                     status:
                         registro.status ||
                         "Não respondido",
+                    finalizado:
+                        Boolean(registro.finalizado),
+                    finalizadoPor:
+                        registro.finalizadoPor || "",
+                    finalizadoEm:
+                        registro.finalizadoEm || "",
                     criadoEm: serverTimestamp(),
                     criadoPor: email,
                     atualizadoEm: serverTimestamp(),
@@ -3924,6 +4226,12 @@
                     Number(item.valorManutencao || 0),
                 status:
                     item.status || "Não respondido",
+                finalizado:
+                    Boolean(item.finalizado),
+                finalizadoPor:
+                    item.finalizadoPor || "",
+                finalizadoEm:
+                    item.finalizadoEm || "",
                 criadoPor: item.criadoPor || "",
                 criadoEm:
                     item.criadoEm || serverTimestamp(),
@@ -4025,6 +4333,21 @@
                             status:
                                 dados.status ||
                                 "Não respondido",
+                            finalizado:
+                                Boolean(
+                                    dados.finalizado
+                                ),
+                            finalizadoPor:
+                                String(
+                                    dados.finalizadoPor || ""
+                                ),
+                            finalizadoEm:
+                                valorFirestoreParaISO(
+                                    dados.finalizadoEm
+                                ) ||
+                                String(
+                                    dados.finalizadoEm || ""
+                                ),
                             criadoPor:
                                 String(
                                     dados.criadoPor || ""
@@ -4181,6 +4504,19 @@
                                     status:
                                         dados.status ||
                                         "Não respondido",
+                                    finalizado:
+                                        Boolean(
+                                            dados.finalizado
+                                        ),
+                                    finalizadoPor:
+                                        String(
+                                            dados.finalizadoPor ||
+                                            ""
+                                        ),
+                                    finalizadoEm:
+                                        valorFirestoreParaISO(
+                                            dados.finalizadoEm
+                                        ),
                                     criadoPor:
                                         String(
                                             dados.criadoPor ||
@@ -4538,6 +4874,7 @@
                         valorManutencao:
                             valorConvertido,
                         status: status.value,
+                        finalizado: false,
                         criadoEm:
                             serverTimestamp(),
                         criadoPor:
@@ -4604,6 +4941,14 @@
         renderizarTabela
     );
     filtroStatus.addEventListener(
+        "change",
+        renderizarTabela
+    );
+    filtroDataDe.addEventListener(
+        "change",
+        renderizarTabela
+    );
+    filtroDataAte.addEventListener(
         "change",
         renderizarTabela
     );
@@ -4869,6 +5214,29 @@
             );
         }
 
+        const dataBR = valor => {
+            if (!valor) {
+                return "";
+            }
+
+            const [ano, mes, dia] =
+                valor.split("-");
+
+            return `${dia}/${mes}/${ano}`;
+        };
+
+        if (filtroDataDe.value) {
+            partes.push(
+                `De: ${dataBR(filtroDataDe.value)}`
+            );
+        }
+
+        if (filtroDataAte.value) {
+            partes.push(
+                `Até: ${dataBR(filtroDataAte.value)}`
+            );
+        }
+
         return partes.join(" | ");
     }
 
@@ -4964,7 +5332,9 @@
                     formatarMoeda(
                         registro.valorManutencao
                     ),
-                    registro.status || "—"
+                    registro.finalizado
+                        ? `${registro.status || "—"} (Finalizado)`
+                        : (registro.status || "—")
                 ]
             );
 
@@ -5244,7 +5614,8 @@
                 "Canal",
                 "Data e hora",
                 "Valor da manutenção",
-                "Situação"
+                "Situação",
+                "Finalizado"
             ];
 
             const linhas = cobrancas.map(
@@ -5261,7 +5632,10 @@
                     formatarMoeda(
                         cobranca.valorManutencao
                     ),
-                    cobranca.status
+                    cobranca.status,
+                    cobranca.finalizado
+                        ? "Sim"
+                        : "Não"
                 ]
             );
 
