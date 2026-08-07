@@ -700,6 +700,121 @@
             transform: none;
         }
 
+
+        .oculto {
+            display: none !important;
+        }
+
+        .botao-informacoes {
+            width: 100%;
+            height: 32px;
+            padding: 0 10px;
+            text-align: left;
+            background-color: #f3e5f5;
+            color: #6a1b9a;
+        }
+
+        .lixeira-aviso {
+            margin: 0 0 18px;
+            padding: 13px 15px;
+            border-radius: 8px;
+            background-color: #fff8e1;
+            color: #795548;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .lixeira-acoes {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .botao-restaurar {
+            height: 34px;
+            padding: 0 12px;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .botao-excluir-definitivo {
+            height: 34px;
+            padding: 0 12px;
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .tempo-lixeira {
+            font-weight: bold;
+            color: #ef6c00;
+        }
+
+        .info-registro-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .info-registro-item {
+            padding: 13px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            background-color: #f7fafc;
+        }
+
+        .info-registro-item span {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #78909c;
+        }
+
+        .info-registro-item strong {
+            display: block;
+            font-size: 14px;
+            color: #37474f;
+            word-break: break-word;
+        }
+
+        @media (max-width: 650px) {
+            .info-registro-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        .acoes-exportacao-graficos {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .botao-pdf {
+            background-color: #b71c1c;
+            color: #ffffff;
+        }
+
+        .botao-pdf:hover {
+            background-color: #8e0000;
+        }
+
+        .botao-pdf:disabled {
+            opacity: 0.65;
+            cursor: wait;
+        }
+
+        @media (max-width: 650px) {
+            .acoes-exportacao-graficos {
+                justify-content: stretch;
+            }
+
+            .acoes-exportacao-graficos button {
+                width: 100%;
+            }
+        }
+
     </style>
 </head>
 
@@ -792,6 +907,14 @@
             id="botaoAbaGraficos"
         >
             Gráficos
+        </button>
+
+        <button
+            type="button"
+            class="botao-aba oculto"
+            id="botaoAbaLixeira"
+        >
+            Lixeira
         </button>
     </div>
 
@@ -962,6 +1085,14 @@
 
             <button
                 type="button"
+                class="botao-pdf"
+                id="botaoExportarPDF"
+            >
+                Exportar PDF
+            </button>
+
+            <button
+                type="button"
                 class="botao-perigo"
                 id="botaoLimpar"
             >
@@ -1001,6 +1132,19 @@
     </div>
 
     <div id="abaGraficos" class="conteudo-aba">
+        <div
+            class="acoes-exportacao-graficos"
+            data-html2canvas-ignore="true"
+        >
+            <button
+                type="button"
+                class="botao-pdf"
+                id="botaoExportarGraficosPDF"
+            >
+                Exportar gráficos em PDF
+            </button>
+        </div>
+
         <section class="resumo-graficos">
             <div class="cartao">
                 <span>Total de orçamentos cobrados</span>
@@ -1106,8 +1250,96 @@
             </div>
         </section>
     </div>
+
+    <div id="abaLixeira" class="conteudo-aba">
+        <section class="painel">
+            <h2>Lixeira</h2>
+
+            <div class="lixeira-aviso">
+                Área restrita ao administrador. Os registros excluídos ficam
+                disponíveis para restauração por 3 dias. Depois desse prazo,
+                deixam de aparecer nesta tela.
+            </div>
+
+            <div class="tabela-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>O.S.</th>
+                            <th>Cliente</th>
+                            <th>Empresa</th>
+                            <th>Valor</th>
+                            <th>Situação</th>
+                            <th>Excluído por</th>
+                            <th>Excluído em</th>
+                            <th>Tempo restante</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="corpoLixeira"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
 </main>
 
+
+
+<div id="modalInformacoes" class="modal-fundo" aria-hidden="true">
+    <div
+        class="modal-conteudo"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tituloModalInformacoes"
+    >
+        <div class="modal-cabecalho">
+            <h2 id="tituloModalInformacoes">Informações do registro</h2>
+
+            <button
+                type="button"
+                id="botaoFecharInformacoes"
+                class="botao-fechar-modal"
+                aria-label="Fechar"
+            >
+                ×
+            </button>
+        </div>
+
+        <div class="info-registro-grid">
+            <div class="info-registro-item">
+                <span>O.S.</span>
+                <strong id="infoOS">—</strong>
+            </div>
+
+            <div class="info-registro-item">
+                <span>Cliente</span>
+                <strong id="infoCliente">—</strong>
+            </div>
+
+            <div class="info-registro-item">
+                <span>Registro criado por</span>
+                <strong id="infoCriadoPor">—</strong>
+            </div>
+
+            <div class="info-registro-item">
+                <span>Registro criado em</span>
+                <strong id="infoCriadoEm">—</strong>
+            </div>
+
+            <div class="info-registro-item">
+                <span>Última alteração por</span>
+                <strong id="infoAtualizadoPor">—</strong>
+            </div>
+
+            <div class="info-registro-item">
+                <span>Última alteração em</span>
+                <strong id="infoAtualizadoEm">—</strong>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="modalEdicao" class="modal-fundo" aria-hidden="true">
     <div class="modal-conteudo" role="dialog" aria-modal="true" aria-labelledby="tituloModalEdicao">
@@ -1194,6 +1426,10 @@
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
@@ -1211,8 +1447,10 @@
         deleteDoc,
         onSnapshot,
         getDocs,
+        getDoc,
         writeBatch,
-        serverTimestamp
+        serverTimestamp,
+        Timestamp
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -1229,6 +1467,7 @@
     const auth = getAuth(firebaseApp);
     const db = getFirestore(firebaseApp);
     const colecaoOrcamentos = collection(db, "orcamentos");
+    const colecaoLixeira = collection(db, "lixeira");
 
     const telaLogin = document.getElementById("telaLogin");
     const formLogin = document.getElementById("formLogin");
@@ -1246,10 +1485,16 @@
         document.getElementById("botaoAbaAcompanhamento");
     const botaoAbaGraficos =
         document.getElementById("botaoAbaGraficos");
+    const botaoAbaLixeira =
+        document.getElementById("botaoAbaLixeira");
     const abaAcompanhamento =
         document.getElementById("abaAcompanhamento");
     const abaGraficos =
         document.getElementById("abaGraficos");
+    const abaLixeira =
+        document.getElementById("abaLixeira");
+    const corpoLixeira =
+        document.getElementById("corpoLixeira");
 
     const formCobranca = document.getElementById("formCobranca");
     const ordemServico = document.getElementById("ordemServico");
@@ -1308,6 +1553,21 @@
     const quantidadeAprovadoEmail =
         document.getElementById("quantidadeAprovadoEmail");
 
+    const modalInformacoes =
+        document.getElementById("modalInformacoes");
+    const botaoFecharInformacoes =
+        document.getElementById("botaoFecharInformacoes");
+    const infoOS = document.getElementById("infoOS");
+    const infoCliente = document.getElementById("infoCliente");
+    const infoCriadoPor =
+        document.getElementById("infoCriadoPor");
+    const infoCriadoEm =
+        document.getElementById("infoCriadoEm");
+    const infoAtualizadoPor =
+        document.getElementById("infoAtualizadoPor");
+    const infoAtualizadoEm =
+        document.getElementById("infoAtualizadoEm");
+
     const modalEdicao = document.getElementById("modalEdicao");
     const formEdicao = document.getElementById("formEdicao");
     const botaoFecharModal =
@@ -1335,11 +1595,18 @@
     const arquivoImportacao =
         document.getElementById("arquivoImportacao");
     const botaoExportar = document.getElementById("botaoExportar");
+    const botaoExportarPDF =
+        document.getElementById("botaoExportarPDF");
+    const botaoExportarGraficosPDF =
+        document.getElementById("botaoExportarGraficosPDF");
     const botaoLimpar = document.getElementById("botaoLimpar");
 
     let cobrancas = [];
+    let itensLixeira = [];
     let registroEmEdicaoId = null;
     let cancelarEscutaFirestore = null;
+    let cancelarEscutaLixeira = null;
+    let usuarioEhAdmin = false;
 
     const CONFIGURACOES_CANAIS = [
         { nome: "Telefone", cor: "#00897b" },
@@ -1354,6 +1621,88 @@
         { nome: "Atualização", cor: "#1565c0" },
         { nome: "Respondido - Em análise", cor: "#6a1b9a" }
     ];
+
+
+    function valorFirestoreParaISO(valor) {
+        if (!valor) {
+            return "";
+        }
+
+        if (typeof valor.toDate === "function") {
+            return valor.toDate().toISOString();
+        }
+
+        const data = new Date(valor);
+
+        return Number.isNaN(data.getTime())
+            ? ""
+            : data.toISOString();
+    }
+
+    function abrirModalInformacoes(registro) {
+        infoOS.textContent = registro.ordemServico || "—";
+        infoCliente.textContent = registro.nomeCliente || "—";
+        infoCriadoPor.textContent = registro.criadoPor || "Não informado";
+        infoCriadoEm.textContent = registro.criadoEm
+            ? formatarData(registro.criadoEm)
+            : "Não informado";
+        infoAtualizadoPor.textContent =
+            registro.atualizadoPor || registro.criadoPor || "Não informado";
+        infoAtualizadoEm.textContent = registro.atualizadoEm
+            ? formatarData(registro.atualizadoEm)
+            : "Não informado";
+
+        modalInformacoes.classList.add("aberto");
+        modalInformacoes.setAttribute("aria-hidden", "false");
+        fecharTodosMenusAcoes();
+    }
+
+    function fecharModalInformacoes() {
+        modalInformacoes.classList.remove("aberto");
+        modalInformacoes.setAttribute("aria-hidden", "true");
+    }
+
+    async function verificarSeEhAdmin(usuario) {
+        if (!usuario) {
+            return false;
+        }
+
+        try {
+            const adminSnapshot = await getDoc(
+                doc(db, "admins", usuario.uid)
+            );
+
+            return adminSnapshot.exists();
+        } catch (erro) {
+            console.error("Erro ao verificar administrador:", erro);
+            return false;
+        }
+    }
+
+    function calcularExpiracaoLixeira() {
+        return Timestamp.fromDate(
+            new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+        );
+    }
+
+    function formatarTempoRestante(expiraEm) {
+        const dataExpiracao = new Date(expiraEm);
+        const diferenca = dataExpiracao.getTime() - Date.now();
+
+        if (!expiraEm || Number.isNaN(dataExpiracao.getTime()) || diferenca <= 0) {
+            return "Expirado";
+        }
+
+        const horasTotais = Math.ceil(diferenca / (60 * 60 * 1000));
+        const dias = Math.floor(horasTotais / 24);
+        const horas = horasTotais % 24;
+
+        if (dias > 0) {
+            return `${dias}d ${horas}h`;
+        }
+
+        return `${horas}h`;
+    }
 
     function definirStatusSincronizacao(texto, tipo = "") {
         statusSincronizacao.textContent = texto;
@@ -1428,9 +1777,13 @@
 
     function alternarAba(nomeAba) {
         const acompanharAtivo = nomeAba === "acompanhamento";
+        const graficosAtivo = nomeAba === "graficos";
+        const lixeiraAtiva =
+            nomeAba === "lixeira" && usuarioEhAdmin;
 
         abaAcompanhamento.classList.toggle("ativo", acompanharAtivo);
-        abaGraficos.classList.toggle("ativo", !acompanharAtivo);
+        abaGraficos.classList.toggle("ativo", graficosAtivo);
+        abaLixeira.classList.toggle("ativo", lixeiraAtiva);
 
         botaoAbaAcompanhamento.classList.toggle(
             "ativo",
@@ -1438,11 +1791,19 @@
         );
         botaoAbaGraficos.classList.toggle(
             "ativo",
-            !acompanharAtivo
+            graficosAtivo
+        );
+        botaoAbaLixeira.classList.toggle(
+            "ativo",
+            lixeiraAtiva
         );
 
-        if (!acompanharAtivo) {
+        if (graficosAtivo) {
             atualizarGraficos();
+        }
+
+        if (lixeiraAtiva) {
+            renderizarLixeira();
         }
     }
 
@@ -2340,8 +2701,9 @@
         }
 
         const confirmar = confirm(
-            `Deseja excluir a cobrança de ${registro.nomeCliente}, ` +
-            `da empresa ${registro.empresa}?`
+            `Deseja enviar a cobrança de ${registro.nomeCliente}, ` +
+            `da empresa ${registro.empresa}, para a lixeira?\n\n` +
+            "Ela poderá ser restaurada pelo administrador durante 3 dias."
         );
 
         if (!confirmar) {
@@ -2349,13 +2711,38 @@
         }
 
         try {
-            await deleteDoc(
-                doc(db, "orcamentos", id)
-            );
+            const lote = writeBatch(db);
+            const referenciaOrigem =
+                doc(db, "orcamentos", id);
+            const referenciaLixeira =
+                doc(db, "lixeira", id);
+
+            lote.set(referenciaLixeira, {
+                origemId: id,
+                ordemServico: registro.ordemServico || "",
+                nomeCliente: registro.nomeCliente || "",
+                empresa: registro.empresa || "",
+                canal: registro.canal || "",
+                dataHora: registro.dataHora || new Date().toISOString(),
+                valorManutencao: Number(registro.valorManutencao || 0),
+                status: registro.status || "Não respondido",
+                criadoPor: registro.criadoPor || "",
+                criadoEm: registro.criadoEm || "",
+                atualizadoPor: registro.atualizadoPor || "",
+                atualizadoEm: registro.atualizadoEm || "",
+                excluidoPor: auth.currentUser.email || "",
+                excluidoEm: serverTimestamp(),
+                expiraEm: calcularExpiracaoLixeira()
+            });
+
+            lote.delete(referenciaOrigem);
+
+            await lote.commit();
         } catch (erro) {
-            console.error("Erro ao excluir:", erro);
+            console.error("Erro ao mover para lixeira:", erro);
             alert(
-                "Não foi possível excluir o registro do Firebase."
+                "Não foi possível enviar o registro para a lixeira. " +
+                "Verifique as regras do Firestore."
             );
         }
     }
@@ -2444,7 +2831,7 @@
         return registrosOrdenados;
     }
 
-    function renderizarTabela() {
+    function obterCobrancasFiltradasAtuais() {
         const textoPesquisa = pesquisa.value
             .trim()
             .toLocaleLowerCase("pt-BR");
@@ -2491,10 +2878,15 @@
                 );
             });
 
-        cobrancasFiltradas = ordenarCobrancas(
+        return ordenarCobrancas(
             cobrancasFiltradas,
             ordenacaoTabela.value
         );
+    }
+
+    function renderizarTabela() {
+        const cobrancasFiltradas =
+            obterCobrancasFiltradasAtuais();
 
         corpoTabela.innerHTML = "";
 
@@ -2627,6 +3019,8 @@
                     document.createElement("button");
                 const opcoesAcoes =
                     document.createElement("div");
+                const botaoInformacoes =
+                    document.createElement("button");
                 const botaoEditar =
                     document.createElement("button");
                 const botaoExcluirRegistro =
@@ -2646,6 +3040,12 @@
 
                 opcoesAcoes.className =
                     "opcoes-acoes";
+
+                botaoInformacoes.type = "button";
+                botaoInformacoes.className =
+                    "botao-informacoes";
+                botaoInformacoes.textContent =
+                    "Informações";
 
                 botaoEditar.type = "button";
                 botaoEditar.className =
@@ -2677,6 +3077,13 @@
                     }
                 );
 
+                botaoInformacoes.addEventListener(
+                    "click",
+                    () => {
+                        abrirModalInformacoes(cobranca);
+                    }
+                );
+
                 botaoEditar.addEventListener(
                     "click",
                     () => {
@@ -2697,6 +3104,9 @@
                         }
                     );
 
+                opcoesAcoes.appendChild(
+                    botaoInformacoes
+                );
                 opcoesAcoes.appendChild(
                     botaoEditar
                 );
@@ -2748,15 +3158,7 @@
     }
 
     async function apagarTodosDoFirestore() {
-        const snapshot =
-            await getDocs(colecaoOrcamentos);
-
-        await executarLotes(
-            snapshot.docs,
-            (lote, documentoSnapshot) => {
-                lote.delete(documentoSnapshot.ref);
-            }
-        );
+        await moverTodosAtivosParaLixeira();
     }
 
     async function adicionarRegistrosAoFirestore(
@@ -2812,6 +3214,352 @@
         );
     }
 
+
+    function renderizarLixeira() {
+        corpoLixeira.innerHTML = "";
+
+        if (!usuarioEhAdmin) {
+            return;
+        }
+
+        const agora = Date.now();
+
+        const visiveis = itensLixeira
+            .filter(item => {
+                const expira = new Date(item.expiraEm).getTime();
+                return !Number.isNaN(expira) && expira > agora;
+            })
+            .sort(
+                (a, b) =>
+                    new Date(b.excluidoEm).getTime() -
+                    new Date(a.excluidoEm).getTime()
+            );
+
+        if (visiveis.length === 0) {
+            const linha = document.createElement("tr");
+            const celula = document.createElement("td");
+
+            celula.colSpan = 9;
+            celula.className = "sem-registros";
+            celula.textContent = "A lixeira está vazia.";
+
+            linha.appendChild(celula);
+            corpoLixeira.appendChild(linha);
+            return;
+        }
+
+        visiveis.forEach(item => {
+            const linha = document.createElement("tr");
+
+            linha.appendChild(
+                criarCelula(item.ordemServico || "—")
+            );
+            linha.appendChild(
+                criarCelula(item.nomeCliente || "—")
+            );
+            linha.appendChild(
+                criarCelula(item.empresa || "—")
+            );
+            linha.appendChild(
+                criarCelula(
+                    formatarMoeda(item.valorManutencao)
+                )
+            );
+            linha.appendChild(
+                criarCelula(item.status || "—")
+            );
+            linha.appendChild(
+                criarCelula(item.excluidoPor || "—")
+            );
+            linha.appendChild(
+                criarCelula(
+                    item.excluidoEm
+                        ? formatarData(item.excluidoEm)
+                        : "—"
+                )
+            );
+
+            const celulaTempo =
+                document.createElement("td");
+            const tempo =
+                document.createElement("span");
+
+            tempo.className = "tempo-lixeira";
+            tempo.textContent =
+                formatarTempoRestante(item.expiraEm);
+
+            celulaTempo.appendChild(tempo);
+            linha.appendChild(celulaTempo);
+
+            const celulaAcoes =
+                document.createElement("td");
+            const areaAcoes =
+                document.createElement("div");
+            const botaoRestaurar =
+                document.createElement("button");
+            const botaoExcluirDefinitivo =
+                document.createElement("button");
+
+            areaAcoes.className = "lixeira-acoes";
+
+            botaoRestaurar.type = "button";
+            botaoRestaurar.className =
+                "botao-restaurar";
+            botaoRestaurar.textContent = "Restaurar";
+
+            botaoExcluirDefinitivo.type = "button";
+            botaoExcluirDefinitivo.className =
+                "botao-excluir-definitivo";
+            botaoExcluirDefinitivo.textContent =
+                "Excluir definitivamente";
+
+            botaoRestaurar.addEventListener(
+                "click",
+                () => restaurarDaLixeira(item)
+            );
+
+            botaoExcluirDefinitivo.addEventListener(
+                "click",
+                () => excluirDefinitivamente(item)
+            );
+
+            areaAcoes.appendChild(botaoRestaurar);
+            areaAcoes.appendChild(
+                botaoExcluirDefinitivo
+            );
+            celulaAcoes.appendChild(areaAcoes);
+            linha.appendChild(celulaAcoes);
+
+            corpoLixeira.appendChild(linha);
+        });
+    }
+
+    async function restaurarDaLixeira(item) {
+        if (!usuarioEhAdmin || !auth.currentUser) {
+            return;
+        }
+
+        const confirmar = confirm(
+            `Deseja restaurar a O.S. ${item.ordemServico || "sem número"}?`
+        );
+
+        if (!confirmar) {
+            return;
+        }
+
+        try {
+            const lote = writeBatch(db);
+            const refAtivo =
+                doc(db, "orcamentos", item.id);
+            const refLixeira =
+                doc(db, "lixeira", item.id);
+
+            lote.set(refAtivo, {
+                ordemServico: item.ordemServico || "",
+                nomeCliente: item.nomeCliente || "",
+                empresa: item.empresa || "",
+                canal: item.canal || "",
+                dataHora:
+                    item.dataHora ||
+                    new Date().toISOString(),
+                valorManutencao:
+                    Number(item.valorManutencao || 0),
+                status:
+                    item.status || "Não respondido",
+                criadoPor: item.criadoPor || "",
+                criadoEm:
+                    item.criadoEm || serverTimestamp(),
+                atualizadoPor:
+                    auth.currentUser.email || "",
+                atualizadoEm: serverTimestamp()
+            });
+
+            lote.delete(refLixeira);
+            await lote.commit();
+
+            alert("Registro restaurado com sucesso.");
+        } catch (erro) {
+            console.error("Erro ao restaurar:", erro);
+            alert(
+                "Não foi possível restaurar o registro."
+            );
+        }
+    }
+
+    async function excluirDefinitivamente(item) {
+        if (!usuarioEhAdmin || !auth.currentUser) {
+            return;
+        }
+
+        const confirmar = confirm(
+            `Excluir DEFINITIVAMENTE a O.S. ` +
+            `${item.ordemServico || "sem número"}?\n\n` +
+            "Esta ação não poderá ser desfeita."
+        );
+
+        if (!confirmar) {
+            return;
+        }
+
+        try {
+            await deleteDoc(
+                doc(db, "lixeira", item.id)
+            );
+        } catch (erro) {
+            console.error(
+                "Erro ao excluir definitivamente:",
+                erro
+            );
+            alert(
+                "Não foi possível excluir definitivamente."
+            );
+        }
+    }
+
+    function iniciarSincronizacaoLixeira() {
+        if (cancelarEscutaLixeira) {
+            cancelarEscutaLixeira();
+            cancelarEscutaLixeira = null;
+        }
+
+        if (!usuarioEhAdmin) {
+            itensLixeira = [];
+            renderizarLixeira();
+            return;
+        }
+
+        cancelarEscutaLixeira = onSnapshot(
+            colecaoLixeira,
+            snapshot => {
+                itensLixeira = snapshot.docs.map(
+                    documentoSnapshot => {
+                        const dados =
+                            documentoSnapshot.data();
+
+                        return {
+                            id: documentoSnapshot.id,
+                            ordemServico:
+                                String(
+                                    dados.ordemServico || ""
+                                ),
+                            nomeCliente:
+                                String(
+                                    dados.nomeCliente || ""
+                                ),
+                            empresa:
+                                String(
+                                    dados.empresa || ""
+                                ),
+                            canal:
+                                String(
+                                    dados.canal || ""
+                                ),
+                            dataHora:
+                                dados.dataHora || "",
+                            valorManutencao:
+                                Number(
+                                    dados.valorManutencao || 0
+                                ),
+                            status:
+                                dados.status ||
+                                "Não respondido",
+                            criadoPor:
+                                String(
+                                    dados.criadoPor || ""
+                                ),
+                            criadoEm:
+                                valorFirestoreParaISO(
+                                    dados.criadoEm
+                                ) ||
+                                String(
+                                    dados.criadoEm || ""
+                                ),
+                            atualizadoPor:
+                                String(
+                                    dados.atualizadoPor || ""
+                                ),
+                            atualizadoEm:
+                                valorFirestoreParaISO(
+                                    dados.atualizadoEm
+                                ) ||
+                                String(
+                                    dados.atualizadoEm || ""
+                                ),
+                            excluidoPor:
+                                String(
+                                    dados.excluidoPor || ""
+                                ),
+                            excluidoEm:
+                                valorFirestoreParaISO(
+                                    dados.excluidoEm
+                                ),
+                            expiraEm:
+                                valorFirestoreParaISO(
+                                    dados.expiraEm
+                                )
+                        };
+                    }
+                );
+
+                renderizarLixeira();
+            },
+            erro => {
+                console.error(
+                    "Erro ao carregar lixeira:",
+                    erro
+                );
+            }
+        );
+    }
+
+    async function moverTodosAtivosParaLixeira() {
+        const snapshot =
+            await getDocs(colecaoOrcamentos);
+
+        const documentos = snapshot.docs;
+        const email =
+            auth.currentUser?.email || "";
+        const tamanhoLote = 200;
+
+        for (
+            let inicio = 0;
+            inicio < documentos.length;
+            inicio += tamanhoLote
+        ) {
+            const parte = documentos.slice(
+                inicio,
+                inicio + tamanhoLote
+            );
+            const lote = writeBatch(db);
+
+            parte.forEach(documentoSnapshot => {
+                const dados =
+                    documentoSnapshot.data();
+                const id =
+                    documentoSnapshot.id;
+
+                lote.set(
+                    doc(db, "lixeira", id),
+                    {
+                        ...dados,
+                        origemId: id,
+                        excluidoPor: email,
+                        excluidoEm:
+                            serverTimestamp(),
+                        expiraEm:
+                            calcularExpiracaoLixeira()
+                    }
+                );
+
+                lote.delete(
+                    doc(db, "orcamentos", id)
+                );
+            });
+
+            await lote.commit();
+        }
+    }
+
     function iniciarSincronizacao() {
         if (cancelarEscutaFirestore) {
             cancelarEscutaFirestore();
@@ -2865,7 +3613,25 @@
                                         ),
                                     status:
                                         dados.status ||
-                                        "Não respondido"
+                                        "Não respondido",
+                                    criadoPor:
+                                        String(
+                                            dados.criadoPor ||
+                                            ""
+                                        ),
+                                    criadoEm:
+                                        valorFirestoreParaISO(
+                                            dados.criadoEm
+                                        ),
+                                    atualizadoPor:
+                                        String(
+                                            dados.atualizadoPor ||
+                                            ""
+                                        ),
+                                    atualizadoEm:
+                                        valorFirestoreParaISO(
+                                            dados.atualizadoEm
+                                        )
                                 };
                             }
                         );
@@ -2954,10 +3720,15 @@
 
     onAuthStateChanged(
         auth,
-        usuario => {
+        async usuario => {
             if (cancelarEscutaFirestore) {
                 cancelarEscutaFirestore();
                 cancelarEscutaFirestore = null;
+            }
+
+            if (cancelarEscutaLixeira) {
+                cancelarEscutaLixeira();
+                cancelarEscutaLixeira = null;
             }
 
             if (usuario) {
@@ -2969,9 +3740,25 @@
                     "aplicacao-bloqueada"
                 );
 
+                usuarioEhAdmin =
+                    await verificarSeEhAdmin(usuario);
+
+                botaoAbaLixeira.classList.toggle(
+                    "oculto",
+                    !usuarioEhAdmin
+                );
+
                 iniciarSincronizacao();
+
+                if (usuarioEhAdmin) {
+                    iniciarSincronizacaoLixeira();
+                }
             } else {
                 cobrancas = [];
+                itensLixeira = [];
+                usuarioEhAdmin = false;
+                botaoAbaLixeira.classList.add("oculto");
+                alternarAba("acompanhamento");
                 emailUsuarioLogado.textContent = "—";
 
                 document.body.classList.add(
@@ -3003,6 +3790,15 @@
         }
     );
 
+    botaoAbaLixeira.addEventListener(
+        "click",
+        () => {
+            if (usuarioEhAdmin) {
+                alternarAba("lixeira");
+            }
+        }
+    );
+
     window.addEventListener(
         "resize",
         () => {
@@ -3019,6 +3815,20 @@
     formEdicao.addEventListener(
         "submit",
         salvarEdicaoRegistro
+    );
+
+    botaoFecharInformacoes.addEventListener(
+        "click",
+        fecharModalInformacoes
+    );
+
+    modalInformacoes.addEventListener(
+        "click",
+        evento => {
+            if (evento.target === modalInformacoes) {
+                fecharModalInformacoes();
+            }
+        }
     );
 
     botaoFecharModal.addEventListener(
@@ -3057,6 +3867,14 @@
                     )
                 ) {
                     fecharModalEdicao();
+                }
+
+                if (
+                    modalInformacoes.classList.contains(
+                        "aberto"
+                    )
+                ) {
+                    fecharModalInformacoes();
                 }
             }
         }
@@ -3224,7 +4042,7 @@
             }
 
             const confirmarNovamente = confirm(
-                "Confirme novamente: deseja apagar TODOS os orçamentos compartilhados?"
+                "Confirme novamente: deseja enviar TODOS os orçamentos ativos para a lixeira?"
             );
 
             if (!confirmarNovamente) {
@@ -3386,6 +4204,422 @@
                 botaoImportar.disabled = false;
             }
         }
+    );
+
+
+    function obterBibliotecaPDF() {
+        if (
+            !window.jspdf ||
+            !window.jspdf.jsPDF
+        ) {
+            throw new Error(
+                "A biblioteca de PDF não foi carregada. " +
+                "Atualize a página e tente novamente."
+            );
+        }
+
+        return window.jspdf.jsPDF;
+    }
+
+    function nomeArquivoSeguro(texto) {
+        return String(texto || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-zA-Z0-9_-]+/g, "_")
+            .replace(/^_+|_+$/g, "")
+            .toLowerCase();
+    }
+
+    function obterDataArquivo() {
+        const agora = new Date();
+
+        const data = agora
+            .toLocaleDateString("pt-BR")
+            .replace(/\//g, "-");
+
+        const hora = agora
+            .toLocaleTimeString(
+                "pt-BR",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            )
+            .replace(/:/g, "-");
+
+        return `${data}_${hora}`;
+    }
+
+    function descreverFiltrosAtuais() {
+        const status =
+            filtroStatus.value || "Todos";
+        const texto =
+            pesquisa.value.trim();
+        const ordenacaoTexto =
+            ordenacaoTabela.options[
+                ordenacaoTabela.selectedIndex
+            ]?.text || "Ordem atual";
+
+        const partes = [
+            `Situação: ${status}`,
+            `Ordenação: ${ordenacaoTexto}`
+        ];
+
+        if (texto) {
+            partes.push(
+                `Pesquisa: ${texto}`
+            );
+        }
+
+        return partes.join(" | ");
+    }
+
+    async function exportarTabelaParaPDF() {
+        const registros =
+            obterCobrancasFiltradasAtuais();
+
+        if (registros.length === 0) {
+            alert(
+                "Não existem registros no filtro atual para exportar."
+            );
+            return;
+        }
+
+        const textoOriginal =
+            botaoExportarPDF.textContent;
+
+        botaoExportarPDF.disabled = true;
+        botaoExportarPDF.textContent =
+            "Gerando PDF...";
+
+        try {
+            const jsPDF = obterBibliotecaPDF();
+
+            const pdf = new jsPDF({
+                orientation: "landscape",
+                unit: "mm",
+                format: "a4"
+            });
+
+            if (
+                typeof pdf.autoTable !== "function"
+            ) {
+                throw new Error(
+                    "O recurso de tabela do PDF não foi carregado."
+                );
+            }
+
+            const larguraPagina =
+                pdf.internal.pageSize.getWidth();
+
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(16);
+            pdf.text(
+                "Limerpak — Acompanhamento de Orçamentos",
+                14,
+                15
+            );
+
+            pdf.setFont(
+                "helvetica",
+                "normal"
+            );
+            pdf.setFontSize(9);
+
+            pdf.text(
+                `Gerado em: ${new Date().toLocaleString("pt-BR")}`,
+                14,
+                21
+            );
+
+            const filtros =
+                descreverFiltrosAtuais();
+
+            const linhasFiltro =
+                pdf.splitTextToSize(
+                    filtros,
+                    larguraPagina - 28
+                );
+
+            pdf.text(
+                linhasFiltro,
+                14,
+                27
+            );
+
+            const inicioTabela =
+                27 +
+                linhasFiltro.length * 4 +
+                3;
+
+            const corpo = registros.map(
+                (registro, indice) => [
+                    indice + 1,
+                    registro.ordemServico || "—",
+                    registro.nomeCliente || "—",
+                    registro.empresa || "—",
+                    registro.canal || "—",
+                    formatarData(
+                        registro.dataHora
+                    ),
+                    formatarMoeda(
+                        registro.valorManutencao
+                    ),
+                    registro.status || "—"
+                ]
+            );
+
+            pdf.autoTable({
+                startY: inicioTabela,
+                head: [[
+                    "Nº",
+                    "O.S.",
+                    "Cliente",
+                    "Empresa",
+                    "Canal",
+                    "Data e hora",
+                    "Valor",
+                    "Situação"
+                ]],
+                body: corpo,
+                theme: "grid",
+                styles: {
+                    font: "helvetica",
+                    fontSize: 7.6,
+                    cellPadding: 2,
+                    overflow: "linebreak",
+                    valign: "middle"
+                },
+                headStyles: {
+                    fontStyle: "bold",
+                    halign: "center"
+                },
+                columnStyles: {
+                    0: {
+                        cellWidth: 10,
+                        halign: "center"
+                    },
+                    1: {
+                        cellWidth: 20
+                    },
+                    4: {
+                        cellWidth: 22
+                    },
+                    5: {
+                        cellWidth: 32
+                    },
+                    6: {
+                        cellWidth: 27,
+                        halign: "right"
+                    },
+                    7: {
+                        cellWidth: 34
+                    }
+                },
+                margin: {
+                    left: 10,
+                    right: 10,
+                    bottom: 12
+                },
+                didDrawPage: dados => {
+                    const paginaAtual =
+                        pdf.internal.getCurrentPageInfo()
+                            .pageNumber;
+
+                    pdf.setFontSize(7.5);
+                    pdf.text(
+                        `Página ${paginaAtual}`,
+                        larguraPagina - 24,
+                        pdf.internal.pageSize.getHeight() - 6
+                    );
+                }
+            });
+
+            const statusArquivo =
+                filtroStatus.value
+                    ? "_" +
+                      nomeArquivoSeguro(
+                          filtroStatus.value
+                      )
+                    : "_todos";
+
+            pdf.save(
+                `orcamentos_limerpak${statusArquivo}_${obterDataArquivo()}.pdf`
+            );
+        } catch (erro) {
+            console.error(
+                "Erro ao exportar tabela em PDF:",
+                erro
+            );
+
+            alert(
+                erro.message ||
+                "Não foi possível gerar o PDF."
+            );
+        } finally {
+            botaoExportarPDF.disabled = false;
+            botaoExportarPDF.textContent =
+                textoOriginal;
+        }
+    }
+
+    async function exportarGraficosParaPDF() {
+        if (
+            typeof window.html2canvas !==
+            "function"
+        ) {
+            alert(
+                "O recurso de captura para PDF não foi carregado. " +
+                "Atualize a página e tente novamente."
+            );
+            return;
+        }
+
+        const textoOriginal =
+            botaoExportarGraficosPDF.textContent;
+
+        botaoExportarGraficosPDF.disabled = true;
+        botaoExportarGraficosPDF.textContent =
+            "Gerando PDF...";
+
+        try {
+            atualizarGraficos();
+
+            await new Promise(resolve =>
+                requestAnimationFrame(
+                    () =>
+                        requestAnimationFrame(resolve)
+                )
+            );
+
+            const jsPDF = obterBibliotecaPDF();
+
+            const canvas =
+                await window.html2canvas(
+                    abaGraficos,
+                    {
+                        scale: 2,
+                        backgroundColor: "#ffffff",
+                        useCORS: true,
+                        logging: false,
+                        scrollX: 0,
+                        scrollY: -window.scrollY
+                    }
+                );
+
+            const pdf = new jsPDF({
+                orientation: "portrait",
+                unit: "mm",
+                format: "a4"
+            });
+
+            const larguraPagina =
+                pdf.internal.pageSize.getWidth();
+            const alturaPagina =
+                pdf.internal.pageSize.getHeight();
+
+            const margem = 8;
+            const larguraUtil =
+                larguraPagina - margem * 2;
+            const alturaUtil =
+                alturaPagina - margem * 2;
+
+            const imagem =
+                canvas.toDataURL(
+                    "image/png",
+                    1.0
+                );
+
+            const alturaImagem =
+                canvas.height *
+                larguraUtil /
+                canvas.width;
+
+            let alturaRestante =
+                alturaImagem;
+            let posicaoY = margem;
+
+            pdf.addImage(
+                imagem,
+                "PNG",
+                margem,
+                posicaoY,
+                larguraUtil,
+                alturaImagem,
+                undefined,
+                "FAST"
+            );
+
+            alturaRestante -=
+                alturaUtil;
+
+            while (alturaRestante > 0) {
+                pdf.addPage();
+
+                posicaoY -=
+                    alturaUtil;
+
+                pdf.addImage(
+                    imagem,
+                    "PNG",
+                    margem,
+                    posicaoY,
+                    larguraUtil,
+                    alturaImagem,
+                    undefined,
+                    "FAST"
+                );
+
+                alturaRestante -=
+                    alturaUtil;
+            }
+
+            const totalPaginas =
+                pdf.getNumberOfPages();
+
+            for (
+                let pagina = 1;
+                pagina <= totalPaginas;
+                pagina++
+            ) {
+                pdf.setPage(pagina);
+                pdf.setFontSize(7.5);
+                pdf.text(
+                    `Limerpak — Gráficos | Página ${pagina} de ${totalPaginas}`,
+                    margem,
+                    alturaPagina - 3
+                );
+            }
+
+            pdf.save(
+                `graficos_orcamentos_limerpak_${obterDataArquivo()}.pdf`
+            );
+        } catch (erro) {
+            console.error(
+                "Erro ao exportar gráficos em PDF:",
+                erro
+            );
+
+            alert(
+                erro.message ||
+                "Não foi possível gerar o PDF dos gráficos."
+            );
+        } finally {
+            botaoExportarGraficosPDF.disabled =
+                false;
+            botaoExportarGraficosPDF.textContent =
+                textoOriginal;
+        }
+    }
+
+    botaoExportarPDF.addEventListener(
+        "click",
+        exportarTabelaParaPDF
+    );
+
+    botaoExportarGraficosPDF.addEventListener(
+        "click",
+        exportarGraficosParaPDF
     );
 
     botaoExportar.addEventListener(
