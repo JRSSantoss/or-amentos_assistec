@@ -230,7 +230,9 @@
         }
 
         .tabela-container {
-            overflow-x: auto;
+            max-height: 68vh;
+            overflow: auto;
+            position: relative;
             border: 1px solid var(--cor-borda);
             border-radius: 8px;
         }
@@ -238,12 +240,22 @@
         table {
             width: 100%;
             min-width: 1000px;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
         }
 
         thead {
             background-color: var(--cor-principal-escura);
             color: var(--cor-branca);
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: var(--cor-principal-escura);
+            color: var(--cor-branca);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16);
         }
 
         th,
