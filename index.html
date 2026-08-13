@@ -1222,6 +1222,7 @@
         /* ===== Painel inicial corporativo e compacto ===== */
         header {
             padding: 15px 20px;
+            background-color: #354f88;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
         }
 
@@ -1272,9 +1273,9 @@
             margin-top: 0;
             margin-left: auto;
             padding: 5px 5px 5px 12px;
-            border: 1px solid rgba(255, 255, 255, 0.22);
+            border: 1px solid rgba(255, 255, 255, 0.20);
             border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.08);
+            background-color: rgba(255, 255, 255, 0.10);
             gap: 9px;
         }
 
@@ -1290,6 +1291,8 @@
             height: 32px;
             padding: 0 12px;
             border-radius: 7px;
+            background-color: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.26);
         }
 
         main {
@@ -1551,6 +1554,92 @@
                 flex: 1 1 auto;
             }
         }
+
+
+        /* ===== Comentários ===== */
+        .celula-comentario {
+            width: 74px;
+            text-align: center;
+        }
+
+        .botao-comentario-tabela {
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid #cfd8dc;
+            background-color: #f5f7f8;
+            color: #90a4ae;
+            box-shadow: none;
+        }
+
+        .botao-comentario-tabela:hover {
+            transform: none;
+            background-color: #eaf2f6;
+            color: var(--cor-principal);
+        }
+
+        .botao-comentario-tabela.com-comentario {
+            border-color: rgba(53, 79, 136, 0.35);
+            background-color: rgba(53, 79, 136, 0.09);
+            color: #354f88;
+        }
+
+        .botao-comentario-tabela svg {
+            width: 19px;
+            height: 19px;
+            fill: currentColor;
+        }
+
+        .botao-comentario-menu {
+            width: 100%;
+            height: 32px;
+            padding: 0 10px;
+            text-align: left;
+            background-color: #e8eaf6;
+            color: #3949ab;
+        }
+
+        .comentario-visualizacao {
+            min-height: 120px;
+            padding: 15px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            background-color: #f8fafb;
+            color: #37474f;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .comentario-meta {
+            margin-top: 10px;
+            color: #78909c;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .campo-comentario textarea {
+            width: 100%;
+            min-height: 160px;
+            resize: vertical;
+            padding: 12px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            font: inherit;
+            color: var(--cor-texto);
+            background-color: #ffffff;
+        }
+
+        .campo-comentario textarea:focus {
+            outline: none;
+            border-color: var(--cor-principal);
+            box-shadow: 0 0 0 3px rgba(24, 90, 125, 0.10);
+        }
 </style>
 </head>
 <body class="aplicacao-bloqueada">
@@ -1584,8 +1673,6 @@
 <div class="cabecalho-conteudo"><div class="marca-sistema"><div class="logo-cabecalho">
 <img alt="Logo da Limerpak" src="data:image/png;base64,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"/>
 </div><div class="marca-textos"><strong>Assistência Técnica / SMI</strong><span>Acompanhamento de cobranças e aprovações de orçamentos</span></div></div>
-
-
 <div class="usuario-logado">
 <span><strong id="emailUsuarioLogado">—</strong></span>
 <button class="botao-sair" id="botaoSair" type="button">
@@ -1728,10 +1815,6 @@
 <input aria-label="Data final" id="filtroDataAte" type="date"/>
 </div>
 </div>
-
-
-
-
 </div>
 <div class="tabela-container">
 <table>
@@ -1746,7 +1829,7 @@
 <th>Data e hora da cobrança</th>
 <th>Valor da manutenção</th>
 <th>Situação</th>
-<th>Ações</th>
+<th>Comentário</th><th>Ações</th>
 </tr>
 </thead>
 <tbody id="corpoTabela"></tbody>
@@ -1976,7 +2059,35 @@
 </section>
 </div>
 </main>
-<div aria-hidden="true" class="modal-fundo" id="modalInformacoes">
+<div aria-hidden="true" class="modal-fundo" id="modalComentarioVisualizacao">
+<div aria-labelledby="tituloModalComentarioVisualizacao" aria-modal="true" class="modal-conteudo" role="dialog">
+<div class="modal-cabecalho">
+<h2 id="tituloModalComentarioVisualizacao">Comentário</h2>
+<button aria-label="Fechar" class="botao-fechar-modal" id="botaoFecharComentarioVisualizacao" type="button">×</button>
+</div>
+<div class="comentario-visualizacao" id="textoComentarioVisualizacao">
+            Nenhum comentário cadastrado.
+        </div>
+<div class="comentario-meta" id="metaComentarioVisualizacao"></div>
+</div>
+</div><div aria-hidden="true" class="modal-fundo" id="modalComentarioEdicao">
+<div aria-labelledby="tituloModalComentarioEdicao" aria-modal="true" class="modal-conteudo" role="dialog">
+<div class="modal-cabecalho">
+<h2 id="tituloModalComentarioEdicao">Adicionar comentário</h2>
+<button aria-label="Fechar" class="botao-fechar-modal" id="botaoFecharComentarioEdicao" type="button">×</button>
+</div>
+<form id="formComentario">
+<div class="campo campo-comentario">
+<label for="campoComentario">Comentário</label>
+<textarea id="campoComentario" maxlength="2000" placeholder="Digite o comentário..." required=""></textarea>
+</div>
+<div class="acoes-modal">
+<button class="botao-secundario" id="botaoCancelarComentario" type="button">Cancelar</button>
+<button class="botao-principal" id="botaoSalvarComentario" type="submit">Salvar comentário</button>
+</div>
+</form>
+</div>
+</div><div aria-hidden="true" class="modal-fundo" id="modalInformacoes">
 <div aria-labelledby="tituloModalInformacoes" aria-modal="true" class="modal-conteudo" role="dialog">
 <div class="modal-cabecalho">
 <h2 id="tituloModalInformacoes">Informações do registro</h2>
@@ -2258,6 +2369,30 @@
     const quantidadeAprovadoEmail =
         document.getElementById("quantidadeAprovadoEmail");
 
+    const modalComentarioVisualizacao =
+        document.getElementById("modalComentarioVisualizacao");
+    const botaoFecharComentarioVisualizacao =
+        document.getElementById("botaoFecharComentarioVisualizacao");
+    const textoComentarioVisualizacao =
+        document.getElementById("textoComentarioVisualizacao");
+    const metaComentarioVisualizacao =
+        document.getElementById("metaComentarioVisualizacao");
+
+    const modalComentarioEdicao =
+        document.getElementById("modalComentarioEdicao");
+    const formComentario =
+        document.getElementById("formComentario");
+    const tituloModalComentarioEdicao =
+        document.getElementById("tituloModalComentarioEdicao");
+    const campoComentario =
+        document.getElementById("campoComentario");
+    const botaoFecharComentarioEdicao =
+        document.getElementById("botaoFecharComentarioEdicao");
+    const botaoCancelarComentario =
+        document.getElementById("botaoCancelarComentario");
+    const botaoSalvarComentario =
+        document.getElementById("botaoSalvarComentario");
+
     const modalInformacoes =
         document.getElementById("modalInformacoes");
     const botaoFecharInformacoes =
@@ -2316,6 +2451,7 @@
     let cobrancas = [];
     let itensLixeira = [];
     let registroEmEdicaoId = null;
+    let registroComentarioId = null;
     let cancelarEscutaFirestore = null;
     let cancelarEscutaLixeira = null;
     let usuarioEhAdmin = false;
@@ -2349,6 +2485,164 @@
         return Number.isNaN(data.getTime())
             ? ""
             : data.toISOString();
+    }
+
+    function abrirComentarioVisualizacao(registro) {
+        const temComentario =
+            Boolean(
+                String(registro.comentario || "").trim()
+            );
+
+        textoComentarioVisualizacao.textContent =
+            temComentario
+                ? registro.comentario
+                : "Nenhum comentário cadastrado.";
+
+        if (temComentario) {
+            const autor =
+                registro.comentarioPor ||
+                "Usuário não identificado";
+
+            const data =
+                registro.comentarioEm
+                    ? formatarData(registro.comentarioEm)
+                    : "Data não informada";
+
+            metaComentarioVisualizacao.textContent =
+                `Última atualização: ${autor} • ${data}`;
+        } else {
+            metaComentarioVisualizacao.textContent = "";
+        }
+
+        modalComentarioVisualizacao.classList.add("aberto");
+        modalComentarioVisualizacao.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+        fecharTodosMenusAcoes();
+    }
+
+    function fecharComentarioVisualizacao() {
+        modalComentarioVisualizacao.classList.remove("aberto");
+        modalComentarioVisualizacao.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+    }
+
+    function abrirComentarioEdicao(registro) {
+        if (!registro || registro.finalizado) {
+            if (registro?.finalizado) {
+                alert(
+                    "Este registro já foi finalizado. O comentário pode ser consultado, mas não alterado."
+                );
+            }
+            return;
+        }
+
+        registroComentarioId = registro.id;
+        campoComentario.value =
+            registro.comentario || "";
+
+        tituloModalComentarioEdicao.textContent =
+            registro.comentario
+                ? "Editar comentário"
+                : "Adicionar comentário";
+
+        modalComentarioEdicao.classList.add("aberto");
+        modalComentarioEdicao.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+        fecharTodosMenusAcoes();
+
+        setTimeout(
+            () => campoComentario.focus(),
+            0
+        );
+    }
+
+    function fecharComentarioEdicao() {
+        registroComentarioId = null;
+        formComentario.reset();
+
+        modalComentarioEdicao.classList.remove("aberto");
+        modalComentarioEdicao.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+    }
+
+    async function salvarComentario() {
+        if (
+            !auth.currentUser ||
+            !registroComentarioId
+        ) {
+            return;
+        }
+
+        const registro =
+            cobrancas.find(
+                item => item.id === registroComentarioId
+            );
+
+        if (!registro || registro.finalizado) {
+            alert(
+                "Este registro não pode mais ser alterado."
+            );
+            fecharComentarioEdicao();
+            return;
+        }
+
+        const texto =
+            campoComentario.value.trim();
+
+        if (!texto) {
+            alert("Digite um comentário.");
+            campoComentario.focus();
+            return;
+        }
+
+        botaoSalvarComentario.disabled = true;
+        botaoSalvarComentario.textContent =
+            "Salvando...";
+
+        try {
+            await updateDoc(
+                doc(
+                    db,
+                    "orcamentos",
+                    registroComentarioId
+                ),
+                {
+                    comentario: texto,
+                    comentarioPor:
+                        auth.currentUser.email || "",
+                    comentarioEm:
+                        serverTimestamp(),
+                    atualizadoPor:
+                        auth.currentUser.email || "",
+                    atualizadoEm:
+                        serverTimestamp()
+                }
+            );
+
+            fecharComentarioEdicao();
+        } catch (erro) {
+            console.error(
+                "Erro ao salvar comentário:",
+                erro
+            );
+
+            alert(
+                "Não foi possível salvar o comentário."
+            );
+        } finally {
+            botaoSalvarComentario.disabled = false;
+            botaoSalvarComentario.textContent =
+                "Salvar comentário";
+        }
     }
 
     function abrirModalInformacoes(registro) {
@@ -4049,6 +4343,10 @@
             "premium",
             "cliente premium"
         );
+        const indiceComentario = localizarColuna(
+            "comentario",
+            "comentário"
+        );
         const indiceFinalizado = localizarColuna(
             "finalizado"
         );
@@ -4143,6 +4441,14 @@
                             ? valorConvertido
                             : 0,
                     status: situacao,
+                    comentario:
+                        indiceComentario >= 0
+                            ? String(
+                                linha[indiceComentario] || ""
+                            ).trim()
+                            : "",
+                    comentarioPor: "",
+                    comentarioEm: null,
                     premium:
                         indicePremium >= 0
                             ? ["sim", "true", "1", "premium", "★"].includes(
@@ -4389,6 +4695,9 @@
                 finalizado: Boolean(registro.finalizado),
                 finalizadoPor: registro.finalizadoPor || "",
                 finalizadoEm: registro.finalizadoEm || "",
+                comentario: registro.comentario || "",
+                comentarioPor: registro.comentarioPor || "",
+                comentarioEm: registro.comentarioEm || null,
                 criadoPor: registro.criadoPor || "",
                 criadoEm: registro.criadoEm || "",
                 atualizadoPor: registro.atualizadoPor || "",
@@ -4629,7 +4938,7 @@
             const celula =
                 document.createElement("td");
 
-            celula.colSpan = 10;
+            celula.colSpan = 11;
             celula.className = "sem-registros";
             celula.textContent =
                 "Nenhum registro encontrado.";
@@ -4830,6 +5139,57 @@
                 );
                 linha.appendChild(celulaStatus);
 
+                const celulaComentario =
+                    document.createElement("td");
+                const botaoComentarioTabela =
+                    document.createElement("button");
+
+                celulaComentario.className =
+                    "celula-comentario";
+
+                botaoComentarioTabela.type =
+                    "button";
+                botaoComentarioTabela.className =
+                    cobranca.comentario
+                        ? "botao-comentario-tabela com-comentario"
+                        : "botao-comentario-tabela";
+
+                botaoComentarioTabela.innerHTML = `
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        focusable="false"
+                    >
+                        <path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm2 5h12V7H6v2zm0 4h9v-2H6v2z"></path>
+                    </svg>
+                `;
+
+                botaoComentarioTabela.title =
+                    cobranca.comentario
+                        ? "Ver comentário"
+                        : "Sem comentário";
+
+                botaoComentarioTabela.setAttribute(
+                    "aria-label",
+                    botaoComentarioTabela.title
+                );
+
+                botaoComentarioTabela.addEventListener(
+                    "click",
+                    () => {
+                        abrirComentarioVisualizacao(
+                            cobranca
+                        );
+                    }
+                );
+
+                celulaComentario.appendChild(
+                    botaoComentarioTabela
+                );
+                linha.appendChild(
+                    celulaComentario
+                );
+
                 const celulaAcoes =
                     document.createElement("td");
                 const menuAcoes =
@@ -4839,6 +5199,8 @@
                 const opcoesAcoes =
                     document.createElement("div");
                 const botaoInformacoes =
+                    document.createElement("button");
+                const botaoComentario =
                     document.createElement("button");
                 const botaoEditar =
                     document.createElement("button");
@@ -4867,6 +5229,15 @@
                     "botao-informacoes";
                 botaoInformacoes.textContent =
                     "Informações";
+
+                botaoComentario.type =
+                    "button";
+                botaoComentario.className =
+                    "botao-comentario-menu";
+                botaoComentario.textContent =
+                    cobranca.comentario
+                        ? "Editar comentário"
+                        : "Adicionar comentário";
 
                 botaoEditar.type = "button";
                 botaoEditar.className =
@@ -4911,6 +5282,15 @@
                     }
                 );
 
+                botaoComentario.addEventListener(
+                    "click",
+                    () => {
+                        abrirComentarioEdicao(
+                            cobranca
+                        );
+                    }
+                );
+
                 botaoEditar.addEventListener(
                     "click",
                     () => {
@@ -4945,6 +5325,9 @@
                 );
 
                 if (!cobranca.finalizado) {
+                    opcoesAcoes.appendChild(
+                        botaoComentario
+                    );
                     opcoesAcoes.appendChild(
                         botaoEditar
                     );
@@ -5049,6 +5432,18 @@
                     status:
                         registro.status ||
                         "Não respondido",
+                    comentario:
+                        String(
+                            registro.comentario || ""
+                        ),
+                    comentarioPor:
+                        registro.comentario
+                            ? (auth.currentUser?.email || "")
+                            : "",
+                    comentarioEm:
+                        registro.comentario
+                            ? serverTimestamp()
+                            : null,
                     premium:
                         Boolean(registro.premium),
                     finalizado:
@@ -5232,6 +5627,12 @@
                     item.finalizadoPor || "",
                 finalizadoEm:
                     item.finalizadoEm || "",
+                comentario:
+                    item.comentario || "",
+                comentarioPor:
+                    item.comentarioPor || "",
+                comentarioEm:
+                    item.comentarioEm || null,
                 criadoPor: item.criadoPor || "",
                 criadoEm:
                     item.criadoEm || serverTimestamp(),
@@ -5381,6 +5782,21 @@
                                 String(
                                     dados.atualizadoEm || ""
                                 ),
+                            comentario:
+                                String(
+                                    dados.comentario || ""
+                                ),
+                            comentarioPor:
+                                String(
+                                    dados.comentarioPor || ""
+                                ),
+                            comentarioEm:
+                                valorFirestoreParaISO(
+                                    dados.comentarioEm
+                                ) ||
+                                String(
+                                    dados.comentarioEm || ""
+                                ),
                             excluidoPor:
                                 String(
                                     dados.excluidoPor || ""
@@ -5505,6 +5921,20 @@
                                     atualizadoEm:
                                         valorFirestoreParaISO(
                                             dados.atualizadoEm
+                                        ),
+                                    comentario:
+                                        String(
+                                            dados.comentario ||
+                                            ""
+                                        ),
+                                    comentarioPor:
+                                        String(
+                                            dados.comentarioPor ||
+                                            ""
+                                        ),
+                                    comentarioEm:
+                                        valorFirestoreParaISO(
+                                            dados.comentarioEm
                                         )
                                 };
                             }
@@ -5749,6 +6179,53 @@
         salvarEdicaoRegistro
     );
 
+    botaoFecharComentarioVisualizacao.addEventListener(
+        "click",
+        fecharComentarioVisualizacao
+    );
+
+    modalComentarioVisualizacao.addEventListener(
+        "click",
+        evento => {
+            if (
+                evento.target ===
+                modalComentarioVisualizacao
+            ) {
+                fecharComentarioVisualizacao();
+            }
+        }
+    );
+
+    botaoFecharComentarioEdicao.addEventListener(
+        "click",
+        fecharComentarioEdicao
+    );
+
+    botaoCancelarComentario.addEventListener(
+        "click",
+        fecharComentarioEdicao
+    );
+
+    modalComentarioEdicao.addEventListener(
+        "click",
+        evento => {
+            if (
+                evento.target ===
+                modalComentarioEdicao
+            ) {
+                fecharComentarioEdicao();
+            }
+        }
+    );
+
+    formComentario.addEventListener(
+        "submit",
+        async evento => {
+            evento.preventDefault();
+            await salvarComentario();
+        }
+    );
+
     botaoFecharInformacoes.addEventListener(
         "click",
         fecharModalInformacoes
@@ -5807,6 +6284,22 @@
                     )
                 ) {
                     fecharModalInformacoes();
+                }
+
+                if (
+                    modalComentarioVisualizacao.classList.contains(
+                        "aberto"
+                    )
+                ) {
+                    fecharComentarioVisualizacao();
+                }
+
+                if (
+                    modalComentarioEdicao.classList.contains(
+                        "aberto"
+                    )
+                ) {
+                    fecharComentarioEdicao();
                 }
             }
         }
@@ -5892,6 +6385,9 @@
                                 : null,
                         premium: false,
                         finalizado: false,
+                        comentario: "",
+                        comentarioPor: "",
+                        comentarioEm: null,
                         criadoEm:
                             serverTimestamp(),
                         criadoPor:
@@ -6556,6 +7052,7 @@
                 "Data e hora",
                 "Valor da manutenção",
                 "Situação",
+                "Comentário",
                 "Finalizado"
             ];
 
@@ -6576,6 +7073,7 @@
                         cobranca.valorManutencao
                     ),
                     cobranca.status,
+                    cobranca.comentario || "",
                     cobranca.finalizado
                         ? "Sim"
                         : "Não"
